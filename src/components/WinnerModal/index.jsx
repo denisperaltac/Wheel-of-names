@@ -1,36 +1,56 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect } from "react";
 
-import { Confetti } from '../Confetti';
+import { Confetti } from "../Confetti";
 
 const COUNTDOWN_TOTAL_SECONDS = 150;
 
 const COUNTDOWN_PALETTE = [
-  '#2ecc71',
-  '#48cfad',
-  '#a0d468',
-  '#ffce54',
-  '#f1c40f',
-  '#e67e22',
-  '#fc6e51',
-  '#e74c3c',
-  '#c0392b',
+  "#2ecc71",
+  "#48cfad",
+  "#a0d468",
+  "#ffce54",
+  "#f1c40f",
+  "#e67e22",
+  "#fc6e51",
+  "#e74c3c",
+  "#c0392b",
+];
+
+const COUNTDOWN_STAGES = [
+  { threshold: 100, icon: "😎" },
+  { threshold: 60, icon: "🙂" },
+  { threshold: 30, icon: "😬" },
+  { threshold: 15, icon: "😧" },
+  { threshold: 1, icon: "😱" },
+  { threshold: -Infinity, icon: "💀" },
 ];
 
 const formatTime = (seconds) => {
-  const m = Math.floor(seconds / 60);
-  const s = seconds % 60;
+  const abs = Math.abs(seconds);
+  const m = Math.floor(abs / 60);
+  const s = abs % 60;
+  const sign = seconds < 0 ? "-" : "";
 
-  return `${m}:${s.toString().padStart(2, '0')}`;
+  return `${sign}${m}:${s.toString().padStart(2, "0")}`;
 };
 
 const getCountdownColor = (remainingSeconds) => {
-  const progress = 1 - remainingSeconds / COUNTDOWN_TOTAL_SECONDS;
+  const clamped = Math.max(0, remainingSeconds);
+  const progress = 1 - clamped / COUNTDOWN_TOTAL_SECONDS;
   const index = Math.min(
     Math.floor(progress * COUNTDOWN_PALETTE.length),
     COUNTDOWN_PALETTE.length - 1,
   );
 
   return COUNTDOWN_PALETTE[index];
+};
+
+const getCountdownIcon = (remainingSeconds) => {
+  for (const stage of COUNTDOWN_STAGES) {
+    if (remainingSeconds >= stage.threshold) return stage.icon;
+  }
+
+  return "💀";
 };
 
 const WinnerModal = ({ winner, winnerImage, onClose, onRemoveAndClose }) => {
@@ -46,15 +66,7 @@ const WinnerModal = ({ winner, winnerImage, onClose, onRemoveAndClose }) => {
     setRemainingSeconds(COUNTDOWN_TOTAL_SECONDS);
 
     const interval = setInterval(() => {
-      setRemainingSeconds((prev) => {
-        const next = Math.max(0, prev - 1);
-
-        if (next === 0) {
-          clearInterval(interval);
-        }
-
-        return next;
-      });
+      setRemainingSeconds((prev) => prev - 1);
     }, 1000);
 
     return () => clearInterval(interval);
@@ -65,9 +77,10 @@ const WinnerModal = ({ winner, winnerImage, onClose, onRemoveAndClose }) => {
   }
 
   const countdownColor = getCountdownColor(remainingSeconds);
+  const countdownIcon = getCountdownIcon(remainingSeconds);
 
   const handleOverlayKeyDown = (e) => {
-    if (e.key === 'Enter' || e.key === ' ') {
+    if (e.key === "Enter" || e.key === " ") {
       onClose();
     }
   };
@@ -103,10 +116,11 @@ const WinnerModal = ({ winner, winnerImage, onClose, onRemoveAndClose }) => {
         )}
         <p className="winner-modal__name">{winner}</p>
         <p
-          className="winner-modal__countdown"
+          className={`winner-modal__countdown${remainingSeconds <= 0 ? " winner-modal__countdown--overtime" : ""}`}
           style={{ color: countdownColor }}
           aria-live="polite"
         >
+          <span className="winner-modal__countdown-icon">{countdownIcon}</span>
           {formatTime(remainingSeconds)}
         </p>
         <div className="winner-modal__actions">
