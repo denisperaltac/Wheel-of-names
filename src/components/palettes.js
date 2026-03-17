@@ -101,6 +101,7 @@ export const PALETTES = {
     colors: PALETTE_ARGENTINA,
     pointer: '/pointers/Messi.png',
     pointerClass: 'messi',
+    center: '/centers/LogoAFA.png',
   },
   river: {
     id: 'river',
@@ -114,12 +115,14 @@ export const PALETTES = {
     colors: PALETTE_VENEZUELA,
     pointer: '/pointers/Maduro.png',
     pointerClass: 'maduro',
+    center: '/centers/LogoVenezuela.png',
   },
   meli: {
     id: 'meli',
     name: 'Mercado Libre',
     colors: PALETTE_MELI,
     pointer: '/pointers/Meli.png',
+    center: '/centers/LogoMeli.png',
   },
   harryPotter: {
     id: 'harryPotter',
@@ -127,6 +130,7 @@ export const PALETTES = {
     colors: PALETTE_HARRY_POTTER,
     pointer: '/pointers/HarryPotter.png',
     pointerClass: 'harryPotter',
+    center: '/centers/LogoHogwarts.png',
   },
 };
 

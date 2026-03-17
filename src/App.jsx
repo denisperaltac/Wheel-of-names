@@ -7,7 +7,6 @@ import { PaletteSelector } from './components/PaletteSelector';
 import { PaletteModal } from './components/PaletteModal';
 import { NamesModal } from './components/NamesModal';
 import { DailyEndScreen } from './components/DailyEndScreen';
-import { LogomeliIcon } from './components/LogomeliIcon';
 import { DRIVER_NAMES, getDriverImage } from './components/drivers';
 import { PALETTES, PALETTE_IDS } from './components/palettes';
 import { securePick } from './utils/secureRandom';
@@ -71,6 +70,7 @@ const WheelOfNames = () => {
   const paletteColors = currentPalette.colors;
   const palettePointer = currentPalette.pointer ?? null;
   const palettePointerClass = currentPalette.pointerClass ?? null;
+  const paletteCenter = currentPalette.center ?? null;
 
   const handleRandomPalette = () => {
     const others = PALETTE_IDS.filter((id) => id !== paletteId);
@@ -150,9 +150,6 @@ const WheelOfNames = () => {
   return (
     <div className="wheel-page" data-palette={paletteId}>
       <div className="wheel-page__header-left">
-        <a href="/" className="wheel-page__logo" aria-label="Mercado Libre">
-          <LogomeliIcon className="wheel-page__logo-svg" />
-        </a>
         <h1 className="wheel-page__title">DREAM TEAM DAILY</h1>
       </div>
       <PaletteSelector
@@ -173,6 +170,7 @@ const WheelOfNames = () => {
               colors={paletteColors}
               pointer={palettePointer}
               pointerClass={palettePointerClass}
+              center={paletteCenter}
             />
           ) : (
             <DailyEndScreen />

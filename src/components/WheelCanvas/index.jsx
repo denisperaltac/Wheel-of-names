@@ -37,7 +37,7 @@ const lighten = (hex, amount) => {
   return `rgb(${r},${g},${b})`;
 };
 
-const drawWheel = (ctx, names, currentAngle, size, colors) => {
+const drawWheel = (ctx, names, currentAngle, size, colors, skipHub = false) => {
   const palette = colors && colors.length > 0 ? colors : DEFAULT_COLORS;
   const scale = size / BASE_SIZE;
   const cx = size / 2;
@@ -118,26 +118,28 @@ const drawWheel = (ctx, names, currentAngle, size, colors) => {
     ctx.restore();
   });
 
-  const hubRadius = 22 * scale;
-  const hubGrad = ctx.createRadialGradient(
-    cx - 4,
-    cy - 4,
-    0,
-    cx,
-    cy,
-    hubRadius,
-  );
+  if (!skipHub) {
+    const hubRadius = 22 * scale;
+    const hubGrad = ctx.createRadialGradient(
+      cx - 4,
+      cy - 4,
+      0,
+      cx,
+      cy,
+      hubRadius,
+    );
 
-  hubGrad.addColorStop(0, '#ffffff');
-  hubGrad.addColorStop(0.7, '#f0f0f0');
-  hubGrad.addColorStop(1, '#e0e0e0');
-  ctx.beginPath();
-  ctx.arc(cx, cy, hubRadius, 0, 2 * Math.PI);
-  ctx.fillStyle = hubGrad;
-  ctx.fill();
-  ctx.strokeStyle = 'rgba(255, 255, 255, 0.4)';
-  ctx.lineWidth = 1.5 * scale;
-  ctx.stroke();
+    hubGrad.addColorStop(0, '#ffffff');
+    hubGrad.addColorStop(0.7, '#f0f0f0');
+    hubGrad.addColorStop(1, '#e0e0e0');
+    ctx.beginPath();
+    ctx.arc(cx, cy, hubRadius, 0, 2 * Math.PI);
+    ctx.fillStyle = hubGrad;
+    ctx.fill();
+    ctx.strokeStyle = 'rgba(255, 255, 255, 0.4)';
+    ctx.lineWidth = 1.5 * scale;
+    ctx.stroke();
+  }
 };
 
 const WheelCanvas = ({
@@ -148,6 +150,7 @@ const WheelCanvas = ({
   colors,
   pointer,
   pointerClass,
+  center,
 }) => {
   const containerRef = useRef(null);
   const canvasRef = useRef(null);
@@ -170,8 +173,8 @@ const WheelCanvas = ({
 
     const ctx = canvas.getContext('2d');
 
-    drawWheel(ctx, names, angleRef.current, size, colors);
-  }, [names, size, colors]);
+    drawWheel(ctx, names, angleRef.current, size, colors, !!center);
+  }, [names, size, colors, center]);
 
   useEffect(() => {
     draw();
@@ -364,6 +367,15 @@ const WheelCanvas = ({
         <div className={`wheel-pointer${pointer ? ' wheel-pointer--custom' : ''}${pointerClass ? ` wheel-pointer--${pointerClass}` : ''}`} aria-hidden>
           {pointer ? <img src={pointer} alt="" /> : <ShovelIcon />}
         </div>
+        {center && (
+          <img
+            src={center}
+            alt=""
+            className="wheel-center"
+            aria-hidden
+            style={{ '--wheel-size': `${size}px` }}
+          />
+        )}
       </div>
     </div>
   );
