@@ -20,6 +20,14 @@ const BASE_SIZE = 500;
 
 const easeOutCubic = (t) => 1 - (1 - t) ** 3;
 
+const getLuminance = (hex) => {
+  const num = parseInt(hex.replace('#', ''), 16);
+  const r = num >> 16;
+  const g = (num >> 8) & 0xff;
+  const b = num & 0xff;
+  return (r * 299 + g * 587 + b * 114) / 1000;
+};
+
 const lighten = (hex, amount) => {
   const num = parseInt(hex.replace('#', ''), 16);
   const r = Math.min(255, Math.floor(num / 0x10000) + amount);
@@ -76,7 +84,9 @@ const drawWheel = (ctx, names, currentAngle, size, colors) => {
     ctx.translate(cx, cy);
     ctx.rotate(startAngle + segmentAngle / 2);
     ctx.textAlign = 'right';
-    ctx.fillStyle = '#fff';
+
+    const isLight = getLuminance(baseColor) > 180;
+    ctx.fillStyle = isLight ? '#1a1a1a' : '#fff';
 
     const fontSize = Math.min(
       36 * scale,
@@ -84,8 +94,8 @@ const drawWheel = (ctx, names, currentAngle, size, colors) => {
     );
 
     ctx.font = `bold italic ${fontSize}px 'Trebuchet MS', 'Arial Narrow', Arial, sans-serif`;
-    ctx.shadowColor = 'rgba(0,0,0,0.55)';
-    ctx.shadowBlur = 4;
+    ctx.shadowColor = isLight ? 'rgba(0,0,0,0.2)' : 'rgba(0,0,0,0.55)';
+    ctx.shadowBlur = isLight ? 3 : 4;
     ctx.shadowOffsetX = 1;
     ctx.shadowOffsetY = 1;
 
@@ -137,6 +147,7 @@ const WheelCanvas = ({
   onClick,
   colors,
   pointer,
+  pointerClass,
 }) => {
   const containerRef = useRef(null);
   const canvasRef = useRef(null);
@@ -350,7 +361,7 @@ const WheelCanvas = ({
           className={`wheel-canvas${spinning ? ' wheel-canvas--spinning' : ''}`}
           onClick={spinning ? undefined : onClick}
         />
-        <div className={`wheel-pointer${pointer ? ' wheel-pointer--custom' : ''}`} aria-hidden>
+        <div className={`wheel-pointer${pointer ? ' wheel-pointer--custom' : ''}${pointerClass ? ` wheel-pointer--${pointerClass}` : ''}`} aria-hidden>
           {pointer ? <img src={pointer} alt="" /> : <ShovelIcon />}
         </div>
       </div>

@@ -64,6 +64,12 @@ export const PALETTE_ARGENTINA = [
   '#F6B40E',
 ];
 
+export const PALETTE_RIVER = [
+  '#FFFFFF',
+  '#E2001A',
+  '#1A1A1A',
+];
+
 export const PALETTES = {
   soft: { id: 'soft', name: 'Soft', colors: PALETTE_SOFT },
   electric: { id: 'electric', name: 'Electric', colors: PALETTE_ELECTRIC },
@@ -74,7 +80,14 @@ export const PALETTES = {
     id: 'argentina',
     name: 'Argentina',
     colors: PALETTE_ARGENTINA,
-    pointer: '/selectors/Messi.png',
+    pointer: '/pointers/Messi.png',
+    pointerClass: 'messi',
+  },
+  river: {
+    id: 'river',
+    name: 'River Plate',
+    colors: PALETTE_RIVER,
+    pointer: '/pointers/River.png',
   },
 };
 

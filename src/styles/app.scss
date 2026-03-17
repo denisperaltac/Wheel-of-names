@@ -303,9 +303,9 @@ $wheel-glow: rgb(74 158 255 / 15%);
   }
 
   &--custom {
-    width: calc(260px * var(--pointer-scale, 1));
-    height: calc(260px * var(--pointer-scale, 1));
-    right: calc(-200px * var(--pointer-scale, 1));
+    width: calc(120px * var(--pointer-scale, 1));
+    height: calc(120px * var(--pointer-scale, 1));
+    right: calc(-95px * var(--pointer-scale, 1));
     transform: translateY(-50%) rotate(0deg);
     filter: drop-shadow(3px 0 10px rgb(0 0 0 / 60%));
 
@@ -314,9 +314,23 @@ $wheel-glow: rgb(74 158 255 / 15%);
     }
 
     @media (width <= 768px) {
-      right: calc(-60px * var(--pointer-scale, 1));
-      width: calc(90px * var(--pointer-scale, 1));
-      height: calc(90px * var(--pointer-scale, 1));
+      right: calc(-35px * var(--pointer-scale, 1));
+      width: calc(45px * var(--pointer-scale, 1));
+      height: calc(45px * var(--pointer-scale, 1));
+    }
+  }
+
+  &--messi {
+    width: calc(310px * var(--pointer-scale, 1));
+    height: calc(310px * var(--pointer-scale, 1));
+    right: calc(-260px * var(--pointer-scale, 1));
+    transform: translateY(calc(-50% + 55px * var(--pointer-scale, 1))) rotate(0deg);
+
+    @media (width <= 768px) {
+      right: calc(-55px * var(--pointer-scale, 1));
+      width: calc(80px * var(--pointer-scale, 1));
+      height: calc(80px * var(--pointer-scale, 1));
+      transform: translateY(calc(-50% + 8px * var(--pointer-scale, 1))) rotate(0deg);
     }
   }
 }

@@ -70,6 +70,7 @@ const WheelOfNames = () => {
   const currentPalette = PALETTES[paletteId] ?? PALETTES.soft;
   const paletteColors = currentPalette.colors;
   const palettePointer = currentPalette.pointer ?? null;
+  const palettePointerClass = currentPalette.pointerClass ?? null;
 
   const handleRandomPalette = () => {
     const others = PALETTE_IDS.filter((id) => id !== paletteId);
@@ -171,6 +172,7 @@ const WheelOfNames = () => {
               onClick={handleSpin}
               colors={paletteColors}
               pointer={palettePointer}
+              pointerClass={palettePointerClass}
             />
           ) : (
             <DailyEndScreen />
