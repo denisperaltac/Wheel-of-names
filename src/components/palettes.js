@@ -82,6 +82,13 @@ export const PALETTE_MELI = [
   '#FFFFFF',
 ];
 
+export const PALETTE_HARRY_POTTER = [
+  '#E9A11A',
+  '#7F0922',
+  '#2F5D8C',
+  '#1E5B3A',
+];
+
 export const PALETTES = {
   soft: { id: 'soft', name: 'Soft', colors: PALETTE_SOFT },
   electric: { id: 'electric', name: 'Electric', colors: PALETTE_ELECTRIC },
@@ -113,6 +120,13 @@ export const PALETTES = {
     name: 'Mercado Libre',
     colors: PALETTE_MELI,
     pointer: '/pointers/Meli.png',
+  },
+  harryPotter: {
+    id: 'harryPotter',
+    name: 'Harry Potter',
+    colors: PALETTE_HARRY_POTTER,
+    pointer: '/pointers/HarryPotter.png',
+    pointerClass: 'harryPotter',
   },
 };
 

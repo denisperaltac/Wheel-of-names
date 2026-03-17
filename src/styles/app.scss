@@ -345,6 +345,20 @@ $wheel-glow: rgb(74 158 255 / 15%);
       right: calc(-75px * var(--pointer-scale, 1));
     }
   }
+
+  &--harryPotter {
+    width: calc(300px * var(--pointer-scale, 1));
+    height: calc(300px * var(--pointer-scale, 1));
+    right: calc(-265px * var(--pointer-scale, 1));
+    transform: translateY(calc(-50% + 35px * var(--pointer-scale, 1))) rotate(0deg);
+
+    @media (width <= 768px) {
+      width: calc(80px * var(--pointer-scale, 1));
+      height: calc(80px * var(--pointer-scale, 1));
+      right: calc(-75px * var(--pointer-scale, 1));
+      transform: translateY(calc(-50% + 35px * var(--pointer-scale, 1))) rotate(0deg);
+    }
+  }
 }
 
 .name-list {
