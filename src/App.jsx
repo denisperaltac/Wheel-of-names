@@ -1,11 +1,13 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 
 import { WheelCanvas } from './components/WheelCanvas';
-import { NameList } from './components/NameList';
 import { WinnerModal } from './components/WinnerModal';
 import { WinnerToast } from './components/WinnerToast';
 import { PaletteSelector } from './components/PaletteSelector';
+import { PaletteModal } from './components/PaletteModal';
+import { NamesModal } from './components/NamesModal';
 import { ShovelIcon } from './components/ShovelIcon';
+import { DailyEndScreen } from './components/DailyEndScreen';
 import { LogomeliIcon } from './components/LogomeliIcon';
 import { DRIVER_NAMES, getDriverImage } from './components/drivers';
 import { PALETTES, PALETTE_IDS } from './components/palettes';
@@ -51,8 +53,28 @@ const WheelOfNames = () => {
     setPaletteId(randomId);
   }, []);
 
+  const [paletteModalOpen, setPaletteModalOpen] = useState(false);
+  const [namesModalOpen, setNamesModalOpen] = useState(false);
+
+  const formatClock = () => {
+    const now = new Date();
+    return `${now.getHours()}:${now.getMinutes().toString().padStart(2, '0')}`;
+  };
+
+  const [clock, setClock] = useState(formatClock);
+
+  useEffect(() => {
+    const id = setInterval(() => setClock(formatClock()), 10_000);
+    return () => clearInterval(id);
+  }, []);
+
   const setPalette = (id) => setPaletteId(id);
   const paletteColors = PALETTES[paletteId]?.colors ?? PALETTES.soft.colors;
+
+  const handleRandomPalette = () => {
+    const others = PALETTE_IDS.filter((id) => id !== paletteId);
+    setPaletteId(securePick(others));
+  };
 
   const saveNames = (newNames) => {
     setNames(newNames);
@@ -132,7 +154,12 @@ const WheelOfNames = () => {
       <a href="/" className="wheel-page__logo" aria-label="Mercado Libre">
         <LogomeliIcon className="wheel-page__logo-svg" />
       </a>
-      <PaletteSelector value={paletteId} onChange={setPalette} />
+      <PaletteSelector
+        onOpenModal={() => setPaletteModalOpen(true)}
+        onRandom={handleRandomPalette}
+        onOpenNames={() => setNamesModalOpen(true)}
+        nameCount={names.length}
+      />
       <h1 className="wheel-page__title">DREAM TEAM DAILY</h1>
 
       <div className="wheel-page__layout">
@@ -147,24 +174,8 @@ const WheelOfNames = () => {
               fullscreen={fullscreen}
             />
           ) : (
-            <div className="wheel-page__empty">
-              <ShovelIcon className="wheel-page__empty-icon" aria-hidden />
-              <span>A laburar!!!</span>
-            </div>
+            <DailyEndScreen />
           )}
-        </div>
-
-        <div className="wheel-page__right">
-          <NameList
-            names={names}
-            onAdd={handleAdd}
-            onRemove={handleRemove}
-            onUpdate={handleUpdate}
-            onReset={handleReset}
-            spinning={spinning}
-            pastWinners={pastWinners}
-            onRestore={handleRestore}
-          />
         </div>
       </div>
 
@@ -215,6 +226,27 @@ const WheelOfNames = () => {
         onRemoveAndClose={handleRemoveAndClose}
       />
       {toast && <WinnerToast name={toast} onDismiss={handleDismissToast} />}
+      {paletteModalOpen && (
+        <PaletteModal
+          value={paletteId}
+          onChange={setPalette}
+          onClose={() => setPaletteModalOpen(false)}
+        />
+      )}
+      {namesModalOpen && (
+        <NamesModal
+          names={names}
+          onAdd={handleAdd}
+          onRemove={handleRemove}
+          onUpdate={handleUpdate}
+          onReset={handleReset}
+          spinning={spinning}
+          pastWinners={pastWinners}
+          onRestore={handleRestore}
+          onClose={() => setNamesModalOpen(false)}
+        />
+      )}
+      <span className="wheel-page__clock">{clock}</span>
     </div>
   );
 };

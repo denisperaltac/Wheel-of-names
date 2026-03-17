@@ -1,10 +1,5 @@
 const ShovelIcon = ({ className, ...props }) => (
-  <img
-    src="/pala.png"
-    alt=""
-    className={className}
-    {...props}
-  />
+  <img src="/palas/pala.png" alt="" className={className} {...props} />
 );
 
 export { ShovelIcon };
