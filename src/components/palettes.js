@@ -70,6 +70,18 @@ export const PALETTE_RIVER = [
   '#1A1A1A',
 ];
 
+export const PALETTE_VENEZUELA = [
+  '#FFCC00',
+  '#00247D',
+  '#CF142B',
+];
+
+export const PALETTE_MELI = [
+  '#FFE600',
+  '#3483FA',
+  '#FFFFFF',
+];
+
 export const PALETTES = {
   soft: { id: 'soft', name: 'Soft', colors: PALETTE_SOFT },
   electric: { id: 'electric', name: 'Electric', colors: PALETTE_ELECTRIC },
@@ -88,6 +100,19 @@ export const PALETTES = {
     name: 'River Plate',
     colors: PALETTE_RIVER,
     pointer: '/pointers/River.png',
+  },
+  venezuela: {
+    id: 'venezuela',
+    name: 'Venezuela',
+    colors: PALETTE_VENEZUELA,
+    pointer: '/pointers/Maduro.png',
+    pointerClass: 'maduro',
+  },
+  meli: {
+    id: 'meli',
+    name: 'Mercado Libre',
+    colors: PALETTE_MELI,
+    pointer: '/pointers/Meli.png',
   },
 };
 
