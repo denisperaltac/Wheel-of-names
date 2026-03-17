@@ -136,7 +136,7 @@ const WheelCanvas = ({
   onSpinEnd,
   onClick,
   colors,
-  fullscreen,
+  pointer,
 }) => {
   const containerRef = useRef(null);
   const canvasRef = useRef(null);
@@ -172,16 +172,9 @@ const WheelCanvas = ({
     let t3;
 
     const getSizeFromViewport = () => {
-      if (fullscreen) {
-        const maxSize = Math.min(window.innerWidth, window.innerHeight) - 16;
-
-        return Math.max(200, maxSize);
-      }
-
-      const panelWidth = 280;
       const padding = 32;
       const reservedHeight = 80;
-      const maxW = window.innerWidth - panelWidth - padding;
+      const maxW = window.innerWidth - padding;
       const maxH = window.innerHeight - reservedHeight;
       const maxSize = Math.min(maxW, maxH) - 16;
 
@@ -247,7 +240,7 @@ const WheelCanvas = ({
 
       window.removeEventListener('resize', updateSize);
     };
-  }, [fullscreen]);
+  }, []);
 
   useEffect(() => {
     if (spinning) {
@@ -357,8 +350,8 @@ const WheelCanvas = ({
           className={`wheel-canvas${spinning ? ' wheel-canvas--spinning' : ''}`}
           onClick={spinning ? undefined : onClick}
         />
-        <div className="wheel-pointer" aria-hidden>
-          <ShovelIcon />
+        <div className={`wheel-pointer${pointer ? ' wheel-pointer--custom' : ''}`} aria-hidden>
+          {pointer ? <img src={pointer} alt="" /> : <ShovelIcon />}
         </div>
       </div>
     </div>

@@ -58,12 +58,24 @@ export const PALETTE_VIVID = [
   '#903498',
 ];
 
+export const PALETTE_ARGENTINA = [
+  '#75AADB',
+  '#FFFFFF',
+  '#F6B40E',
+];
+
 export const PALETTES = {
   soft: { id: 'soft', name: 'Soft', colors: PALETTE_SOFT },
   electric: { id: 'electric', name: 'Electric', colors: PALETTE_ELECTRIC },
   earth: { id: 'earth', name: 'Earth', colors: PALETTE_EARTH },
   berry: { id: 'berry', name: 'Berry', colors: PALETTE_BERRY },
   vivid: { id: 'vivid', name: 'Vivid', colors: PALETTE_VIVID },
+  argentina: {
+    id: 'argentina',
+    name: 'Argentina',
+    colors: PALETTE_ARGENTINA,
+    pointer: '/selectors/Messi.png',
+  },
 };
 
 export const PALETTE_IDS = Object.keys(PALETTES);

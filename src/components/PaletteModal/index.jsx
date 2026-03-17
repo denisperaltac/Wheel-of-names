@@ -75,11 +75,20 @@ const PaletteModal = ({ value, onChange, onClose }) => {
                 onClick={() => handleSelect(id)}
                 aria-pressed={isSelected}
               >
-                <div
-                  className="palette-card__wheel"
-                  style={{ background: buildConicGradient(palette.colors) }}
-                >
-                  <div className="palette-card__wheel-hub" />
+                <div className="palette-card__wheel-wrapper">
+                  <div
+                    className="palette-card__wheel"
+                    style={{ background: buildConicGradient(palette.colors) }}
+                  >
+                    <div className="palette-card__wheel-hub" />
+                  </div>
+                  {palette.pointer && (
+                    <img
+                      className="palette-card__pointer"
+                      src={palette.pointer}
+                      alt=""
+                    />
+                  )}
                 </div>
                 <span className="palette-card__name">{palette.name}</span>
                 <span className="palette-card__swatches">

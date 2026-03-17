@@ -6,7 +6,6 @@ import { WinnerToast } from './components/WinnerToast';
 import { PaletteSelector } from './components/PaletteSelector';
 import { PaletteModal } from './components/PaletteModal';
 import { NamesModal } from './components/NamesModal';
-import { ShovelIcon } from './components/ShovelIcon';
 import { DailyEndScreen } from './components/DailyEndScreen';
 import { LogomeliIcon } from './components/LogomeliIcon';
 import { DRIVER_NAMES, getDriverImage } from './components/drivers';
@@ -42,7 +41,6 @@ const WheelOfNames = () => {
   const [winner, setWinner] = useState(null);
   const [pastWinners, setPastWinners] = useState([]);
   const [toast, setToast] = useState(null);
-  const [fullscreen, setFullscreen] = useState(false);
   const modalOpenedAt = useRef(null);
 
   const [paletteId, setPaletteId] = useState('soft');
@@ -69,7 +67,9 @@ const WheelOfNames = () => {
   }, []);
 
   const setPalette = (id) => setPaletteId(id);
-  const paletteColors = PALETTES[paletteId]?.colors ?? PALETTES.soft.colors;
+  const currentPalette = PALETTES[paletteId] ?? PALETTES.soft;
+  const paletteColors = currentPalette.colors;
+  const palettePointer = currentPalette.pointer ?? null;
 
   const handleRandomPalette = () => {
     const others = PALETTE_IDS.filter((id) => id !== paletteId);
@@ -147,10 +147,7 @@ const WheelOfNames = () => {
   };
 
   return (
-    <div
-      className={`wheel-page${fullscreen ? ' wheel-page--fullscreen' : ''}`}
-      data-palette={paletteId}
-    >
+    <div className="wheel-page" data-palette={paletteId}>
       <div className="wheel-page__header-left">
         <a href="/" className="wheel-page__logo" aria-label="Mercado Libre">
           <LogomeliIcon className="wheel-page__logo-svg" />
@@ -162,8 +159,6 @@ const WheelOfNames = () => {
         onRandom={handleRandomPalette}
         onOpenNames={() => setNamesModalOpen(true)}
         nameCount={names.length}
-        fullscreen={fullscreen}
-        onToggleFullscreen={() => setFullscreen((prev) => !prev)}
       />
 
       <div className="wheel-page__layout">
@@ -175,7 +170,7 @@ const WheelOfNames = () => {
               onSpinEnd={handleSpinEnd}
               onClick={handleSpin}
               colors={paletteColors}
-              fullscreen={fullscreen}
+              pointer={palettePointer}
             />
           ) : (
             <DailyEndScreen />
