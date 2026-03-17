@@ -1,4 +1,11 @@
-const PaletteSelector = ({ onOpenModal, onRandom, onOpenNames, nameCount }) => (
+const PaletteSelector = ({
+  onOpenModal,
+  onRandom,
+  onOpenNames,
+  nameCount,
+  fullscreen,
+  onToggleFullscreen,
+}) => (
   <div className="palette-actions">
     <button
       type="button"
@@ -69,6 +76,45 @@ const PaletteSelector = ({ onOpenModal, onRandom, onOpenNames, nameCount }) => (
       </svg>
       {nameCount > 0 && (
         <span className="palette-actions__badge">{nameCount}</span>
+      )}
+    </button>
+    <button
+      type="button"
+      className="palette-actions__btn"
+      onClick={onToggleFullscreen}
+      aria-label={fullscreen ? 'Salir de pantalla completa' : 'Pantalla completa'}
+      title={fullscreen ? 'Salir de pantalla completa' : 'Pantalla completa'}
+    >
+      {fullscreen ? (
+        <svg
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          aria-hidden="true"
+        >
+          <path d="M8 3v3a2 2 0 0 1-2 2H3" />
+          <path d="M21 8h-3a2 2 0 0 1-2-2V3" />
+          <path d="M3 16h3a2 2 0 0 1 2 2v3" />
+          <path d="M16 21v-3a2 2 0 0 1 2-2h3" />
+        </svg>
+      ) : (
+        <svg
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          aria-hidden="true"
+        >
+          <path d="M3 7V3h4" />
+          <path d="M17 3h4v4" />
+          <path d="M21 17v4h-4" />
+          <path d="M7 21H3v-4" />
+        </svg>
       )}
     </button>
   </div>

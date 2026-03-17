@@ -151,16 +151,20 @@ const WheelOfNames = () => {
       className={`wheel-page${fullscreen ? ' wheel-page--fullscreen' : ''}`}
       data-palette={paletteId}
     >
-      <a href="/" className="wheel-page__logo" aria-label="Mercado Libre">
-        <LogomeliIcon className="wheel-page__logo-svg" />
-      </a>
+      <div className="wheel-page__header-left">
+        <a href="/" className="wheel-page__logo" aria-label="Mercado Libre">
+          <LogomeliIcon className="wheel-page__logo-svg" />
+        </a>
+        <h1 className="wheel-page__title">DREAM TEAM DAILY</h1>
+      </div>
       <PaletteSelector
         onOpenModal={() => setPaletteModalOpen(true)}
         onRandom={handleRandomPalette}
         onOpenNames={() => setNamesModalOpen(true)}
         nameCount={names.length}
+        fullscreen={fullscreen}
+        onToggleFullscreen={() => setFullscreen((prev) => !prev)}
       />
-      <h1 className="wheel-page__title">DREAM TEAM DAILY</h1>
 
       <div className="wheel-page__layout">
         <div className="wheel-page__left">
@@ -179,46 +183,6 @@ const WheelOfNames = () => {
         </div>
       </div>
 
-      <button
-        type="button"
-        className="wheel-page__fullscreen-btn"
-        onClick={() => setFullscreen((prev) => !prev)}
-        aria-label={
-          fullscreen ? 'Salir de pantalla completa' : 'Pantalla completa'
-        }
-      >
-        {fullscreen ? (
-          <svg
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            aria-hidden="true"
-          >
-            <path d="M8 3v3a2 2 0 0 1-2 2H3" />
-            <path d="M21 8h-3a2 2 0 0 1-2-2V3" />
-            <path d="M3 16h3a2 2 0 0 1 2 2v3" />
-            <path d="M16 21v-3a2 2 0 0 1 2-2h3" />
-          </svg>
-        ) : (
-          <svg
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            aria-hidden="true"
-          >
-            <path d="M3 7V3h4" />
-            <path d="M17 3h4v4" />
-            <path d="M21 17v4h-4" />
-            <path d="M7 21H3v-4" />
-          </svg>
-        )}
-      </button>
       <WinnerModal
         winner={winner}
         winnerImage={winner ? getDriverImage(winner) : null}
