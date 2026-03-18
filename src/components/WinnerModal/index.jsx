@@ -1,8 +1,9 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 
 import { Confetti } from "../Confetti";
 
 const COUNTDOWN_TOTAL_SECONDS = 150;
+const PROMOTED_THRESHOLD = -60;
 
 const COUNTDOWN_PALETTE = [
   "#2ecc71",
@@ -22,7 +23,7 @@ const COUNTDOWN_STAGES = [
   { threshold: 30, icon: "😬" },
   { threshold: 15, icon: "😧" },
   { threshold: 1, icon: "😱" },
-  { threshold: -Infinity, icon: "💀" },
+  { threshold: -Infinity, icon: "telegram" },
 ];
 
 const formatTime = (seconds) => {
@@ -50,13 +51,21 @@ const getCountdownIcon = (remainingSeconds) => {
     if (remainingSeconds >= stage.threshold) return stage.icon;
   }
 
-  return "💀";
+  return "telegram";
+};
+
+const getTelegramProgress = (remainingSeconds) => {
+  if (remainingSeconds >= 0) return 0;
+  const elapsed = Math.abs(remainingSeconds);
+  return Math.min(elapsed / Math.abs(PROMOTED_THRESHOLD), 1);
 };
 
 const WinnerModal = ({ winner, winnerImage, onClose, onRemoveAndClose }) => {
   const [remainingSeconds, setRemainingSeconds] = useState(
     COUNTDOWN_TOTAL_SECONDS,
   );
+  const [promoted, setPromoted] = useState(false);
+  const promotedFiredRef = useRef(false);
 
   useEffect(() => {
     if (!winner) {
@@ -64,6 +73,8 @@ const WinnerModal = ({ winner, winnerImage, onClose, onRemoveAndClose }) => {
     }
 
     setRemainingSeconds(COUNTDOWN_TOTAL_SECONDS);
+    setPromoted(false);
+    promotedFiredRef.current = false;
 
     const interval = setInterval(() => {
       setRemainingSeconds((prev) => prev - 1);
@@ -72,16 +83,34 @@ const WinnerModal = ({ winner, winnerImage, onClose, onRemoveAndClose }) => {
     return () => clearInterval(interval);
   }, [winner]);
 
+  useEffect(() => {
+    if (remainingSeconds <= PROMOTED_THRESHOLD && !promotedFiredRef.current) {
+      promotedFiredRef.current = true;
+      setPromoted(true);
+    }
+  }, [remainingSeconds]);
+
   if (!winner) {
     return null;
   }
 
   const countdownColor = getCountdownColor(remainingSeconds);
   const countdownIcon = getCountdownIcon(remainingSeconds);
+  const telegramProgress = getTelegramProgress(remainingSeconds);
+  const showTelegram = remainingSeconds < 0 && !promoted;
+  const promotedElapsed = promoted
+    ? Math.abs(remainingSeconds) - Math.abs(PROMOTED_THRESHOLD)
+    : 0;
+  const showPromotedArrival = promoted && promotedElapsed < 0;
+
+  const closeWithState = (callback) => {
+    const isTelegramWalking = remainingSeconds < 0 && !promoted;
+    callback({ telegramWalking: isTelegramWalking });
+  };
 
   const handleOverlayKeyDown = (e) => {
     if (e.key === "Enter" || e.key === " ") {
-      onClose();
+      closeWithState(onClose);
     }
   };
 
@@ -92,13 +121,14 @@ const WinnerModal = ({ winner, winnerImage, onClose, onRemoveAndClose }) => {
   return (
     <div
       className="winner-modal__overlay"
-      onClick={onClose}
+      onClick={() => closeWithState(onClose)}
       onKeyDown={handleOverlayKeyDown}
       role="button"
       tabIndex={0}
       aria-label="Cerrar modal"
     >
       <Confetti active={!!winner} />
+      {promoted && <Confetti key="promoted" active />}
       <div
         className="winner-modal__box"
         role="dialog"
@@ -115,19 +145,56 @@ const WinnerModal = ({ winner, winnerImage, onClose, onRemoveAndClose }) => {
           />
         )}
         <p className="winner-modal__name">{winner}</p>
-        <p
-          className={`winner-modal__countdown${remainingSeconds <= 0 ? " winner-modal__countdown--overtime" : ""}`}
-          style={{ color: countdownColor }}
-          aria-live="polite"
-        >
-          <span className="winner-modal__countdown-icon">{countdownIcon}</span>
-          {formatTime(remainingSeconds)}
-        </p>
+        {remainingSeconds > 0 && (
+          <p
+            className="winner-modal__countdown"
+            style={{ color: countdownColor }}
+            aria-live="polite"
+          >
+            <span className="winner-modal__countdown-icon">
+              {countdownIcon}
+            </span>
+            {formatTime(remainingSeconds)}
+          </p>
+        )}
+
+        {showTelegram && (
+          <div className="winner-modal__track">
+            <img
+              src="/Telegrama.png"
+              alt="Telegrama"
+              className="winner-modal__track-telegram"
+              style={{
+                left: `calc(${telegramProgress * 100}% - ${telegramProgress * 108}px)`,
+              }}
+            />
+            <span className="winner-modal__track-house">🏠</span>
+          </div>
+        )}
+
+        {promoted && (
+          <div className="winner-modal__promoted">
+            {showPromotedArrival && (
+              <div className="winner-modal__promoted-arrival">
+                <img
+                  src="/Telegrama.png"
+                  alt="Telegrama"
+                  className="winner-modal__track-telegram winner-modal__track-telegram--arrived"
+                />
+                <span className="winner-modal__track-house">🏠</span>
+              </div>
+            )}
+            <p className="winner-modal__promoted-text">
+              Felicitaciones!!! haz sido ascendido a Cliente
+            </p>
+          </div>
+        )}
+
         <div className="winner-modal__actions">
           <button
             type="button"
             className="winner-modal__btn winner-modal__btn--info"
-            onClick={onRemoveAndClose}
+            onClick={() => closeWithState(onRemoveAndClose)}
           >
             Siguiente
           </button>

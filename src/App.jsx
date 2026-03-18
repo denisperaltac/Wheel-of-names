@@ -118,11 +118,13 @@ const WheelOfNames = () => {
     modalOpenedAt.current = Date.now();
   };
 
-  const handleClose = () => {
+  const handleClose = ({ telegramWalking } = {}) => {
     const elapsed = Date.now() - (modalOpenedAt.current ?? 0);
 
-    if (elapsed < 10000) {
-      setToast(winner);
+    if (telegramWalking) {
+      setToast({ name: winner, image: '/MuchoTexto.jpg' });
+    } else if (elapsed < 10000) {
+      setToast({ name: winner });
     }
 
     setWinner(null);
@@ -135,11 +137,13 @@ const WheelOfNames = () => {
     saveNames([...names, name]);
   };
 
-  const handleRemoveAndClose = () => {
+  const handleRemoveAndClose = ({ telegramWalking } = {}) => {
     const elapsed = Date.now() - (modalOpenedAt.current ?? 0);
 
-    if (elapsed < 10000) {
-      setToast(winner);
+    if (telegramWalking) {
+      setToast({ name: winner, image: '/MuchoTexto.jpg' });
+    } else if (elapsed < 10000) {
+      setToast({ name: winner });
     }
 
     saveNames(names.filter((n) => n !== winner));
@@ -184,7 +188,13 @@ const WheelOfNames = () => {
         onClose={handleClose}
         onRemoveAndClose={handleRemoveAndClose}
       />
-      {toast && <WinnerToast name={toast} onDismiss={handleDismissToast} />}
+      {toast && (
+        <WinnerToast
+          name={toast.name}
+          image={toast.image}
+          onDismiss={handleDismissToast}
+        />
+      )}
       {paletteModalOpen && (
         <PaletteModal
           value={paletteId}

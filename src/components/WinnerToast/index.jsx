@@ -12,8 +12,9 @@ const ATRAS_IMAGES = [
 
 const pickRandom = (arr) => arr[Math.floor(Math.random() * arr.length)];
 
-const WinnerToast = ({ name, onDismiss }) => {
-  const [image] = useState(() => pickRandom(ATRAS_IMAGES));
+const WinnerToast = ({ name, image: imageProp, onDismiss }) => {
+  const [randomImage] = useState(() => pickRandom(ATRAS_IMAGES));
+  const image = imageProp || randomImage;
 
   useEffect(() => {
     const timer = setTimeout(() => {
