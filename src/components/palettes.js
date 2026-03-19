@@ -89,6 +89,13 @@ export const PALETTE_HARRY_POTTER = [
   '#1E5B3A',
 ];
 
+export const PALETTE_CLAUDE = [
+  '#D97757',
+  '#1A1915',
+  '#C9B99A',
+  '#E8DBC5',
+];
+
 export const PALETTES = {
   soft: { id: 'soft', name: 'Soft', colors: PALETTE_SOFT },
   electric: { id: 'electric', name: 'Electric', colors: PALETTE_ELECTRIC },
@@ -131,6 +138,13 @@ export const PALETTES = {
     pointer: '/pointers/HarryPotter.png',
     pointerClass: 'harryPotter',
     center: '/centers/LogoHogwarts.png',
+  },
+  claude: {
+    id: 'claude',
+    name: 'Claude',
+    colors: PALETTE_CLAUDE,
+    pointerType: 'claude',
+    center: '/centers/Claude.png',
   },
 };
 

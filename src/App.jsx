@@ -70,6 +70,7 @@ const WheelOfNames = () => {
   const paletteColors = currentPalette.colors;
   const palettePointer = currentPalette.pointer ?? null;
   const palettePointerClass = currentPalette.pointerClass ?? null;
+  const palettePointerType = currentPalette.pointerType ?? null;
   const paletteCenter = currentPalette.center ?? null;
 
   const handleRandomPalette = () => {
@@ -174,6 +175,7 @@ const WheelOfNames = () => {
               colors={paletteColors}
               pointer={palettePointer}
               pointerClass={palettePointerClass}
+              pointerType={palettePointerType}
               center={paletteCenter}
             />
           ) : (

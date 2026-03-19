@@ -3,6 +3,8 @@ import { useRef, useEffect, useCallback, useState } from 'react';
 import { ShovelIcon } from '../ShovelIcon';
 import { secureRandomInt } from '../../utils/secureRandom';
 
+const CLAUDE_PHRASE = 'Claude gira la rueda';
+
 const DEFAULT_COLORS = [
   '#e74c3c',
   '#3498db',
@@ -150,8 +152,11 @@ const WheelCanvas = ({
   colors,
   pointer,
   pointerClass,
+  pointerType,
   center,
 }) => {
+  const [claudeInput, setClaudeInput] = useState('');
+  const claudeMatch = claudeInput.trim().toLowerCase() === CLAUDE_PHRASE.toLowerCase();
   const containerRef = useRef(null);
   const canvasRef = useRef(null);
   const angleRef = useRef(0);
@@ -342,6 +347,18 @@ const WheelCanvas = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [spinning, draw]);
 
+  const handleClaudeSpin = () => {
+    if (claudeMatch && !spinning) {
+      onClick();
+    }
+  };
+
+  const handleClaudeKey = (e) => {
+    if (e.key === 'Enter' && claudeMatch && !spinning) {
+      onClick();
+    }
+  };
+
   const pointerScale = size / BASE_SIZE;
 
   return (
@@ -361,12 +378,44 @@ const WheelCanvas = ({
           ref={canvasRef}
           width={size}
           height={size}
-          className={`wheel-canvas${spinning ? ' wheel-canvas--spinning' : ''}`}
-          onClick={spinning ? undefined : onClick}
+          className={`wheel-canvas${spinning ? ' wheel-canvas--spinning' : ''}${pointerType === 'claude' ? ' wheel-canvas--claude' : ''}`}
+          onClick={spinning || pointerType === 'claude' ? undefined : onClick}
         />
-        <div className={`wheel-pointer${pointer ? ' wheel-pointer--custom' : ''}${pointerClass ? ` wheel-pointer--${pointerClass}` : ''}`} aria-hidden>
-          {pointer ? <img src={pointer} alt="" /> : <ShovelIcon />}
-        </div>
+        {pointerType === 'claude' ? (
+          <div className="wheel-pointer wheel-pointer--claude">
+            <div className="claude-pointer">
+              <div className="claude-pointer__btn-wrap">
+                <button
+                  type="button"
+                  className="claude-pointer__btn"
+                  disabled={!claudeMatch || spinning}
+                  onClick={handleClaudeSpin}
+                  aria-label="Girar la rueda"
+                >
+                  <img src="/ClaudeBtn.png" alt="" className="claude-pointer__logo" />
+                </button>
+                {!claudeMatch && !spinning && (
+                  <span className="claude-pointer__tooltip">
+                    Escribe &quot;Claude gira la rueda&quot; para habilitar
+                  </span>
+                )}
+              </div>
+              <input
+                type="text"
+                className="claude-pointer__input"
+                placeholder={CLAUDE_PHRASE}
+                value={claudeInput}
+                onChange={(e) => setClaudeInput(e.target.value)}
+                onKeyDown={handleClaudeKey}
+                disabled={spinning}
+              />
+            </div>
+          </div>
+        ) : (
+          <div className={`wheel-pointer${pointer ? ' wheel-pointer--custom' : ''}${pointerClass ? ` wheel-pointer--${pointerClass}` : ''}`} aria-hidden>
+            {pointer ? <img src={pointer} alt="" /> : <ShovelIcon />}
+          </div>
+        )}
         {center && (
           <img
             src={center}

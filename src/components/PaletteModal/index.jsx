@@ -1,5 +1,15 @@
 import { PALETTES, PALETTE_IDS } from '../palettes';
 
+const SHUFFLED_IDS = [
+  'argentina', 'electric', 'claude', 'berry',
+  'harryPotter', 'soft', 'venezuela', 'vivid',
+  'meli', 'earth', 'river',
+  ...PALETTE_IDS.filter(
+    (id) =>
+      !['argentina', 'electric', 'claude', 'berry', 'harryPotter', 'soft', 'venezuela', 'vivid', 'meli', 'earth', 'river'].includes(id),
+  ),
+];
+
 const buildConicGradient = (colors) => {
   const n = colors.length;
   const sliceAngle = 360 / n;
@@ -63,7 +73,7 @@ const PaletteModal = ({ value, onChange, onClose }) => {
         </div>
 
         <div className="palette-modal__grid">
-          {PALETTE_IDS.map((id) => {
+          {SHUFFLED_IDS.map((id) => {
             const palette = PALETTES[id];
             const isSelected = value === id;
 
@@ -80,7 +90,15 @@ const PaletteModal = ({ value, onChange, onClose }) => {
                     className="palette-card__wheel"
                     style={{ background: buildConicGradient(palette.colors) }}
                   >
-                    <div className="palette-card__wheel-hub" />
+                    {palette.center ? (
+                      <img
+                        className="palette-card__wheel-center"
+                        src={palette.center}
+                        alt=""
+                      />
+                    ) : (
+                      <div className="palette-card__wheel-hub" />
+                    )}
                   </div>
                   {palette.pointer && (
                     <img
