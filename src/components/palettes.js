@@ -70,12 +70,6 @@ export const PALETTE_RIVER = [
   '#1A1A1A',
 ];
 
-export const PALETTE_VENEZUELA = [
-  '#FFCC00',
-  '#00247D',
-  '#CF142B',
-];
-
 export const PALETTE_MELI = [
   '#FFE600',
   '#3483FA',
@@ -115,14 +109,6 @@ export const PALETTES = {
     name: 'River Plate',
     colors: PALETTE_RIVER,
     pointer: '/pointers/River.png',
-  },
-  venezuela: {
-    id: 'venezuela',
-    name: 'Venezuela',
-    colors: PALETTE_VENEZUELA,
-    pointer: '/pointers/Maduro.png',
-    pointerClass: 'maduro',
-    center: '/centers/LogoVenezuela.png',
   },
   meli: {
     id: 'meli',

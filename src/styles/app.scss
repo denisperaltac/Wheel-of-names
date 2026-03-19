@@ -352,18 +352,6 @@ $wheel-glow: rgb(74 158 255 / 15%);
     }
   }
 
-  &--maduro {
-    width: calc(300px * var(--pointer-scale, 1));
-    height: calc(300px * var(--pointer-scale, 1));
-    right: calc(-245px * var(--pointer-scale, 1));
-
-    @media (width <= 768px) {
-      width: calc(80px * var(--pointer-scale, 1));
-      height: calc(80px * var(--pointer-scale, 1));
-      right: calc(-75px * var(--pointer-scale, 1));
-    }
-  }
-
   &--harryPotter {
     width: calc(300px * var(--pointer-scale, 1));
     height: calc(300px * var(--pointer-scale, 1));
