@@ -98,6 +98,13 @@ const WinnerModal = ({ winner, winnerImage, onClose, onRemoveAndClose }) => {
   const countdownIcon = getCountdownIcon(remainingSeconds);
   const telegramProgress = getTelegramProgress(remainingSeconds);
   const showTelegram = remainingSeconds < 0 && !promoted;
+
+  const displayImage =
+    winner === "Jose" && remainingSeconds <= 0
+      ? "/drivers/JoseOld.png"
+      : winnerImage
+        ? `/${winnerImage}`
+        : null;
   const promotedElapsed = promoted
     ? Math.abs(remainingSeconds) - Math.abs(PROMOTED_THRESHOLD)
     : 0;
@@ -137,59 +144,60 @@ const WinnerModal = ({ winner, winnerImage, onClose, onRemoveAndClose }) => {
         onClick={(e) => e.stopPropagation()}
         onKeyDown={handleBoxKeyDown}
       >
-        {winnerImage && (
+        {displayImage && (
           <img
             className="winner-modal__photo"
-            src={`/${winnerImage}`}
+            src={displayImage}
             alt={winner}
           />
         )}
         <p className="winner-modal__name">{winner}</p>
-        {remainingSeconds > 0 && (
-          <p
-            className="winner-modal__countdown"
-            style={{ color: countdownColor }}
-            aria-live="polite"
-          >
-            <span className="winner-modal__countdown-icon">
-              {countdownIcon}
-            </span>
-            {formatTime(remainingSeconds)}
-          </p>
-        )}
-
-        {showTelegram && (
-          <div className="winner-modal__track">
-            <img
-              src="/Telegrama.png"
-              alt="Telegrama"
-              className="winner-modal__track-telegram"
-              style={{
-                left: `calc(${telegramProgress * 100}% - ${telegramProgress * 108}px)`,
-              }}
-            />
-            <span className="winner-modal__track-house">🏠</span>
-          </div>
-        )}
-
-        {promoted && (
-          <div className="winner-modal__promoted">
-            {showPromotedArrival && (
-              <div className="winner-modal__promoted-arrival">
-                <img
-                  src="/Telegrama.png"
-                  alt="Telegrama"
-                  className="winner-modal__track-telegram winner-modal__track-telegram--arrived"
-                />
-                <span className="winner-modal__track-house">🏠</span>
-              </div>
-            )}
-            <p className="winner-modal__promoted-text">
-              Felicitaciones!!! haz sido ascendido a Cliente
+        <div className="winner-modal__content">
+          {remainingSeconds > 0 && (
+            <p
+              className="winner-modal__countdown"
+              style={{ color: countdownColor }}
+              aria-live="polite"
+            >
+              <span className="winner-modal__countdown-icon">
+                {countdownIcon}
+              </span>
+              {formatTime(remainingSeconds)}
             </p>
-          </div>
-        )}
+          )}
 
+          {showTelegram && (
+            <div className="winner-modal__track">
+              <img
+                src="/Telegrama.png"
+                alt="Telegrama"
+                className="winner-modal__track-telegram"
+                style={{
+                  left: `calc(${telegramProgress * 100}% - ${telegramProgress * 108}px)`,
+                }}
+              />
+              <span className="winner-modal__track-house">🏠</span>
+            </div>
+          )}
+
+          {promoted && (
+            <div className="winner-modal__promoted">
+              {showPromotedArrival && (
+                <div className="winner-modal__promoted-arrival">
+                  <img
+                    src="/Telegrama.png"
+                    alt="Telegrama"
+                    className="winner-modal__track-telegram winner-modal__track-telegram--arrived"
+                  />
+                  <span className="winner-modal__track-house">🏠</span>
+                </div>
+              )}
+              <p className="winner-modal__promoted-text">
+                Felicitaciones!!! haz sido ascendido a Cliente
+              </p>
+            </div>
+          )}
+        </div>
         <div className="winner-modal__actions">
           <button
             type="button"

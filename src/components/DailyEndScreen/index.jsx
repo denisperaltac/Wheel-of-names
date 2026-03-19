@@ -39,7 +39,7 @@ const DailyEndScreen = () => {
     const spawnBatch = () => {
       elapsedRef.current += 1;
 
-      const count = Math.min(Math.floor(1 + elapsedRef.current / 3), 12);
+      const count = Math.min(Math.floor(2 + elapsedRef.current / 1.5), 40);
       const batch = Array.from({ length: count }, () => {
         nextShovelId += 1;
         return {
@@ -55,7 +55,7 @@ const DailyEndScreen = () => {
 
       setShovels((prev) => {
         const combined = [...prev, ...batch];
-        if (combined.length > 200) return combined.slice(-200);
+        if (combined.length > 500) return combined.slice(-500);
         return combined;
       });
     };

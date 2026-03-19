@@ -615,6 +615,15 @@ $wheel-glow: rgb(74 158 255 / 15%);
     width: 92%;
   }
 
+  &__content {
+    min-height: 120px;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  }
+
   &__photo {
     width: 320px;
     height: 320px;
@@ -644,7 +653,7 @@ $wheel-glow: rgb(74 158 255 / 15%);
     font-weight: 800;
     font-variant-numeric: tabular-nums;
     letter-spacing: 0.05em;
-    margin-bottom: 1.5rem;
+    margin-bottom: 1.3rem;
     transition: color 0.4s ease;
     display: flex;
     align-items: center;
