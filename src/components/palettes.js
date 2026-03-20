@@ -1,3 +1,4 @@
+// Palettes
 export const PALETTE_SOFT = [
   "#5d9cec",
   "#4fc1e9",
