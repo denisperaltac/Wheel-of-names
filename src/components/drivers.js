@@ -1,13 +1,13 @@
 const DRIVERS = [
-  { name: 'Chamo', image: 'drivers/Chamo.png' },
-  { name: 'Exequi', image: 'drivers/Exequi.png' },
-  { name: 'Fran', image: 'drivers/Fran.png' },
-  { name: 'Ivan', image: 'drivers/Ivan.png' },
-  { name: 'Jose', image: 'drivers/Jose.png' },
-  { name: 'Juanma', image: 'drivers/Juanma.png' },
-  { name: 'Marian', image: 'drivers/Marian.png' },
-  { name: 'Pelu', image: 'drivers/Pelu.png' },
-  { name: 'Gio', image: 'drivers/Gio.png' },
+  { name: 'Chamo', image: 'drivers/Chamo.jpg' },
+  { name: 'Exequi', image: 'drivers/Exequi.jpg' },
+  { name: 'Fran', image: 'drivers/Fran.jpg' },
+  { name: 'Ivan', image: 'drivers/Ivan.jpg' },
+  { name: 'Jose', image: 'drivers/Jose.jpg' },
+  { name: 'Juanma', image: 'drivers/Juanma.jpg' },
+  { name: 'Marian', image: 'drivers/Marian.jpg' },
+  { name: 'Pelu', image: 'drivers/Pelu.jpg' },
+  { name: 'Gio', image: 'drivers/Gio.jpg' },
 ];
 
 const DRIVER_NAMES = DRIVERS.map((d) => d.name);

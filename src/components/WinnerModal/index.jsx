@@ -60,7 +60,7 @@ const getTelegramProgress = (remainingSeconds) => {
   return Math.min(elapsed / Math.abs(PROMOTED_THRESHOLD), 1);
 };
 
-const WinnerModal = ({ winner, winnerImage, onClose, onRemoveAndClose }) => {
+const WinnerModal = ({ winner, winnerImage, onClose, onRemoveAndClose, confettiColors }) => {
   const [remainingSeconds, setRemainingSeconds] = useState(
     COUNTDOWN_TOTAL_SECONDS,
   );
@@ -101,7 +101,7 @@ const WinnerModal = ({ winner, winnerImage, onClose, onRemoveAndClose }) => {
 
   const displayImage =
     winner === "Jose" && remainingSeconds <= 0
-      ? "/drivers/JoseOld.png"
+      ? "/drivers/JoseOld.jpg"
       : winnerImage
         ? `/${winnerImage}`
         : null;
@@ -134,8 +134,8 @@ const WinnerModal = ({ winner, winnerImage, onClose, onRemoveAndClose }) => {
       tabIndex={0}
       aria-label="Cerrar modal"
     >
-      <Confetti active={!!winner} />
-      {promoted && <Confetti key="promoted" active />}
+      <Confetti active={!!winner} colors={confettiColors} />
+      {promoted && <Confetti key="promoted" active colors={confettiColors} />}
       <div
         className="winner-modal__box"
         role="dialog"

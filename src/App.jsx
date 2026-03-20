@@ -189,6 +189,7 @@ const WheelOfNames = () => {
         winnerImage={winner ? getDriverImage(winner) : null}
         onClose={handleClose}
         onRemoveAndClose={handleRemoveAndClose}
+        confettiColors={paletteColors}
       />
       {toast && (
         <WinnerToast

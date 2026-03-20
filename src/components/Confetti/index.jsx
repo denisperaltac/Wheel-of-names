@@ -1,11 +1,12 @@
 import { useEffect, useRef } from 'react';
 import confetti from 'canvas-confetti';
 
-const COLORS = ['#ffe600', '#3483fa', '#00a650', '#e74c3c', '#9b59b6'];
+const DEFAULT_COLORS = ['#ffe600', '#3483fa', '#00a650', '#e74c3c', '#9b59b6'];
 const DURATION = 4000;
 
-export const Confetti = ({ active }) => {
+export const Confetti = ({ active, colors }) => {
   const canvasRef = useRef(null);
+  const palette = colors && colors.length > 0 ? colors : DEFAULT_COLORS;
 
   useEffect(() => {
     if (!active || !canvasRef.current) return;
@@ -19,7 +20,7 @@ export const Confetti = ({ active }) => {
         angle: 60,
         spread: 55,
         origin: { x: 0, y: 0.6 },
-        colors: COLORS,
+        colors: palette,
       });
 
       cannon({
@@ -27,7 +28,7 @@ export const Confetti = ({ active }) => {
         angle: 120,
         spread: 55,
         origin: { x: 1, y: 0.6 },
-        colors: COLORS,
+        colors: palette,
       });
 
       if (Date.now() < end) {
@@ -38,7 +39,7 @@ export const Confetti = ({ active }) => {
     frame();
 
     return () => cannon.reset();
-  }, [active]);
+  }, [active, palette]);
 
   if (!active) return null;
 
