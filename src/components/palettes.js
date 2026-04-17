@@ -119,12 +119,31 @@ export const PALETTE_CLAUDE = [
   "#1A1915",
 ];
 
+export const PALETTE_VEGAS = [
+  "#1f6f43",
+  "#b10f2e",
+  "#101010",
+  "#b10f2e",
+  "#101010",
+  "#b10f2e",
+  "#101010",
+  "#b10f2e",
+  "#101010",
+];
+
+export const PALETTE_FOOTBALL_TEAMS = [
+  "#0033a0",
+  "#fcd116",
+  "#d00027",
+  "#111111",
+  "#0057b8",
+  "#ed1c24",
+  "#7f1121",
+  "#ffffff",
+  "#008d62",
+];
+
 export const PALETTES = {
-  soft: { id: "soft", name: "Soft", colors: PALETTE_SOFT },
-  electric: { id: "electric", name: "Electric", colors: PALETTE_ELECTRIC },
-  earth: { id: "earth", name: "Earth", colors: PALETTE_EARTH },
-  berry: { id: "berry", name: "Berry", colors: PALETTE_BERRY },
-  vivid: { id: "vivid", name: "Vivid", colors: PALETTE_VIVID },
   argentina: {
     id: "argentina",
     name: "Argentina",
@@ -161,6 +180,29 @@ export const PALETTES = {
     pointerType: "claude",
     center: "/centers/Claude.png",
   },
+  vegas: {
+    id: "vegas",
+    name: "Las Vegas",
+    colors: PALETTE_VEGAS,
+    pointer: "/pointers/LasVegas.png",
+    pointerClass: "vegas",
+    center: "/centers/Las%20Vegas.png",
+    wheelStyle: "vegas",
+  },
+  footballTeams: {
+    id: "footballTeams",
+    name: "Equipos Futbol",
+    colors: PALETTE_FOOTBALL_TEAMS,
+    center: "/centers/Pelota.png",
+  },
 };
 
-export const PALETTE_IDS = Object.keys(PALETTES);
+export const PALETTE_IDS = [
+  "argentina",
+  "river",
+  "meli",
+  "harryPotter",
+  "claude",
+  "vegas",
+  "footballTeams",
+];

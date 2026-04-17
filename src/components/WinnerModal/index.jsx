@@ -60,10 +60,13 @@ const getTelegramProgress = (remainingSeconds) => {
   return Math.min(elapsed / Math.abs(PROMOTED_THRESHOLD), 1);
 };
 
+const BOCA_NOT_FOUND_NAMES = new Set(["Gio", "Pelu"]);
+
 const WinnerModal = ({
   winner,
   winnerImage,
-  winnerHouse,
+  winnerBadge,
+  isVegasTheme,
   onClose,
   onRemoveAndClose,
   confettiColors,
@@ -72,6 +75,7 @@ const WinnerModal = ({
     COUNTDOWN_TOTAL_SECONDS,
   );
   const [promoted, setPromoted] = useState(false);
+  const [showBocaNotFound, setShowBocaNotFound] = useState(false);
   const promotedFiredRef = useRef(false);
 
   useEffect(() => {
@@ -97,6 +101,20 @@ const WinnerModal = ({
     }
   }, [remainingSeconds]);
 
+  useEffect(() => {
+    setShowBocaNotFound(false);
+
+    if (!winner || winnerBadge?.id !== "boca" || !BOCA_NOT_FOUND_NAMES.has(winner)) {
+      return () => {};
+    }
+
+    const timeoutId = setTimeout(() => {
+      setShowBocaNotFound(true);
+    }, 2000);
+
+    return () => clearTimeout(timeoutId);
+  }, [winner, winnerBadge]);
+
   if (!winner) {
     return null;
   }
@@ -116,7 +134,7 @@ const WinnerModal = ({
     ? Math.abs(remainingSeconds) - Math.abs(PROMOTED_THRESHOLD)
     : 0;
   const showPromotedArrival = promoted && promotedElapsed < 0;
-  const houseTheme = winnerHouse?.theme ?? null;
+  const houseTheme = winnerBadge?.theme ?? null;
 
   const closeWithState = (callback) => {
     const isTelegramWalking = remainingSeconds < 0 && !promoted;
@@ -135,7 +153,7 @@ const WinnerModal = ({
 
   return (
     <div
-      className="winner-modal__overlay"
+      className={`winner-modal__overlay${isVegasTheme ? " winner-modal__overlay--vegas" : ""}`}
       onClick={() => closeWithState(onClose)}
       onKeyDown={handleOverlayKeyDown}
       role="button"
@@ -145,7 +163,7 @@ const WinnerModal = ({
       <Confetti active={!!winner} colors={confettiColors} />
       {promoted && <Confetti key="promoted" active colors={confettiColors} />}
       <div
-        className="winner-modal__box"
+        className={`winner-modal__box${isVegasTheme ? " winner-modal__box--vegas" : ""}`}
         style={
           houseTheme
             ? {
@@ -161,6 +179,7 @@ const WinnerModal = ({
         onClick={(e) => e.stopPropagation()}
         onKeyDown={handleBoxKeyDown}
       >
+        {isVegasTheme && <p className="winner-modal__jackpot">JACKPOT WINNER</p>}
         {displayImage && (
           <img
             className="winner-modal__photo"
@@ -169,13 +188,17 @@ const WinnerModal = ({
           />
         )}
         <p className="winner-modal__name">{winner}</p>
-        {winnerHouse && (
+        {winnerBadge && (
           <div className="winner-modal__house">
-            <img
-              className="winner-modal__house-logo"
-              src={winnerHouse.logo}
-              alt={`Escudo de ${winnerHouse.name}`}
-            />
+            {showBocaNotFound ? (
+              <p className="winner-modal__boca-not-found">404 Not Found</p>
+            ) : (
+              <img
+                className="winner-modal__house-logo"
+                src={winnerBadge.logo}
+                alt={`Escudo de ${winnerBadge.name}`}
+              />
+            )}
           </div>
         )}
         <div className="winner-modal__content">

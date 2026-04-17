@@ -39,7 +39,15 @@ const lighten = (hex, amount) => {
   return `rgb(${r},${g},${b})`;
 };
 
-const drawWheel = (ctx, names, currentAngle, size, colors, skipHub = false) => {
+const drawWheel = (
+  ctx,
+  names,
+  currentAngle,
+  size,
+  colors,
+  skipHub = false,
+  wheelStyle = null,
+) => {
   const palette = colors && colors.length > 0 ? colors : DEFAULT_COLORS;
   const scale = size / BASE_SIZE;
   const cx = size / 2;
@@ -49,28 +57,44 @@ const drawWheel = (ctx, names, currentAngle, size, colors, skipHub = false) => {
 
   ctx.clearRect(0, 0, size, size);
 
+  if (wheelStyle === 'vegas') {
+    const outerGrad = ctx.createRadialGradient(cx, cy, radius * 0.1, cx, cy, radius * 1.1);
+    outerGrad.addColorStop(0, '#1c2c24');
+    outerGrad.addColorStop(1, '#09110d');
+    ctx.beginPath();
+    ctx.arc(cx, cy, radius + 8 * scale, 0, 2 * Math.PI);
+    ctx.fillStyle = outerGrad;
+    ctx.fill();
+
+    ctx.beginPath();
+    ctx.arc(cx, cy, radius + 8 * scale, 0, 2 * Math.PI);
+    ctx.strokeStyle = '#c8a74a';
+    ctx.lineWidth = 5 * scale;
+    ctx.stroke();
+  }
+
   ctx.beginPath();
   ctx.arc(cx, cy, radius + 4 * scale, 0, 2 * Math.PI);
-  ctx.strokeStyle = 'rgba(255, 255, 255, 0.12)';
-  ctx.lineWidth = 2 * scale;
+  ctx.strokeStyle =
+    wheelStyle === 'vegas' ? 'rgba(200, 167, 74, 0.85)' : 'rgba(255, 255, 255, 0.12)';
+  ctx.lineWidth = wheelStyle === 'vegas' ? 3 * scale : 2 * scale;
   ctx.stroke();
 
   names.forEach((name, i) => {
     const startAngle = currentAngle + i * segmentAngle;
     const endAngle = startAngle + segmentAngle;
 
-    const grad = ctx.createRadialGradient(
-      cx,
-      cy,
-      radius * 0.15,
-      cx,
-      cy,
-      radius,
-    );
     const baseColor = palette[i % palette.length];
+    const isVegas = wheelStyle === 'vegas';
+    const grad = ctx.createRadialGradient(cx, cy, radius * 0.15, cx, cy, radius);
 
-    grad.addColorStop(0, lighten(baseColor, 30));
-    grad.addColorStop(1, baseColor);
+    if (isVegas) {
+      grad.addColorStop(0, lighten(baseColor, 18));
+      grad.addColorStop(1, baseColor);
+    } else {
+      grad.addColorStop(0, lighten(baseColor, 30));
+      grad.addColorStop(1, baseColor);
+    }
 
     ctx.beginPath();
     ctx.moveTo(cx, cy);
@@ -78,8 +102,8 @@ const drawWheel = (ctx, names, currentAngle, size, colors, skipHub = false) => {
     ctx.closePath();
     ctx.fillStyle = grad;
     ctx.fill();
-    ctx.strokeStyle = 'rgba(255,255,255,0.8)';
-    ctx.lineWidth = 2.5 * scale;
+    ctx.strokeStyle = isVegas ? '#d4b15a' : 'rgba(255,255,255,0.8)';
+    ctx.lineWidth = isVegas ? 2.2 * scale : 2.5 * scale;
     ctx.stroke();
 
     ctx.save();
@@ -88,16 +112,31 @@ const drawWheel = (ctx, names, currentAngle, size, colors, skipHub = false) => {
     ctx.textAlign = 'right';
 
     const isLight = getLuminance(baseColor) > 180;
-    ctx.fillStyle = isLight ? '#1a1a1a' : '#fff';
+    ctx.fillStyle =
+      wheelStyle === 'vegas'
+        ? baseColor.toLowerCase() === '#101010'
+          ? '#f6e5b3'
+          : '#ffffff'
+        : isLight
+          ? '#1a1a1a'
+          : '#fff';
 
     const fontSize = Math.min(
       36 * scale,
       Math.max(16, (radius / names.length) * 3.2),
     );
 
-    ctx.font = `bold italic ${fontSize}px 'Trebuchet MS', 'Arial Narrow', Arial, sans-serif`;
-    ctx.shadowColor = isLight ? 'rgba(0,0,0,0.2)' : 'rgba(0,0,0,0.55)';
-    ctx.shadowBlur = isLight ? 3 : 4;
+    ctx.font =
+      wheelStyle === 'vegas'
+        ? `bold ${fontSize}px 'Trebuchet MS', 'Arial Narrow', Arial, sans-serif`
+        : `bold italic ${fontSize}px 'Trebuchet MS', 'Arial Narrow', Arial, sans-serif`;
+    ctx.shadowColor =
+      wheelStyle === 'vegas'
+        ? 'rgba(0,0,0,0.7)'
+        : isLight
+          ? 'rgba(0,0,0,0.2)'
+          : 'rgba(0,0,0,0.55)';
+    ctx.shadowBlur = wheelStyle === 'vegas' ? 2.5 : isLight ? 3 : 4;
     ctx.shadowOffsetX = 1;
     ctx.shadowOffsetY = 1;
 
@@ -121,25 +160,25 @@ const drawWheel = (ctx, names, currentAngle, size, colors, skipHub = false) => {
   });
 
   if (!skipHub) {
-    const hubRadius = 22 * scale;
-    const hubGrad = ctx.createRadialGradient(
-      cx - 4,
-      cy - 4,
-      0,
-      cx,
-      cy,
-      hubRadius,
-    );
+    const hubRadius = wheelStyle === 'vegas' ? 28 * scale : 22 * scale;
+    const hubGrad = ctx.createRadialGradient(cx - 4, cy - 4, 0, cx, cy, hubRadius);
 
-    hubGrad.addColorStop(0, '#ffffff');
-    hubGrad.addColorStop(0.7, '#f0f0f0');
-    hubGrad.addColorStop(1, '#e0e0e0');
+    if (wheelStyle === 'vegas') {
+      hubGrad.addColorStop(0, '#f7e6ba');
+      hubGrad.addColorStop(0.7, '#d8b25c');
+      hubGrad.addColorStop(1, '#7a5d25');
+    } else {
+      hubGrad.addColorStop(0, '#ffffff');
+      hubGrad.addColorStop(0.7, '#f0f0f0');
+      hubGrad.addColorStop(1, '#e0e0e0');
+    }
     ctx.beginPath();
     ctx.arc(cx, cy, hubRadius, 0, 2 * Math.PI);
     ctx.fillStyle = hubGrad;
     ctx.fill();
-    ctx.strokeStyle = 'rgba(255, 255, 255, 0.4)';
-    ctx.lineWidth = 1.5 * scale;
+    ctx.strokeStyle =
+      wheelStyle === 'vegas' ? 'rgba(255, 232, 173, 0.9)' : 'rgba(255, 255, 255, 0.4)';
+    ctx.lineWidth = wheelStyle === 'vegas' ? 2.2 * scale : 1.5 * scale;
     ctx.stroke();
   }
 };
@@ -154,6 +193,7 @@ const WheelCanvas = ({
   pointerClass,
   pointerType,
   center,
+  wheelStyle,
 }) => {
   const [claudeInput, setClaudeInput] = useState('');
   const claudeMatch = claudeInput.trim().toLowerCase() === CLAUDE_PHRASE.toLowerCase();
@@ -178,8 +218,8 @@ const WheelCanvas = ({
 
     const ctx = canvas.getContext('2d');
 
-    drawWheel(ctx, names, angleRef.current, size, colors, !!center);
-  }, [names, size, colors, center]);
+    drawWheel(ctx, names, angleRef.current, size, colors, !!center, wheelStyle);
+  }, [names, size, colors, center, wheelStyle]);
 
   useEffect(() => {
     draw();

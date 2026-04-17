@@ -1,13 +1,14 @@
 import { PALETTES, PALETTE_IDS } from '../palettes';
 
 const SHUFFLED_IDS = [
-  'argentina', 'electric', 'claude', 'berry',
-  'harryPotter', 'soft', 'vivid',
-  'meli', 'earth', 'river',
-  ...PALETTE_IDS.filter(
-    (id) =>
-      !['argentina', 'electric', 'claude', 'berry', 'harryPotter', 'soft', 'vivid', 'meli', 'earth', 'river'].includes(id),
-  ),
+  'argentina',
+  'river',
+  'meli',
+  'harryPotter',
+  'footballTeams',
+  'claude',
+  'vegas',
+  ...PALETTE_IDS.filter((id) => !['argentina', 'river', 'meli', 'harryPotter', 'footballTeams', 'claude', 'vegas'].includes(id)),
 ];
 
 const buildConicGradient = (colors) => {

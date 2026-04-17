@@ -243,6 +243,23 @@ $wheel-glow: rgb(74 158 255 / 15%);
 
 }
 
+.wheel-page[data-palette='vegas'] {
+  background:
+    radial-gradient(
+      ellipse 120% 85% at 30% 35%,
+      rgb(194 141 49 / 16%) 0%,
+      transparent 55%
+    ),
+    linear-gradient(180deg, #07110d 0%, #0e1f16 42%, #060d0a 100%);
+
+  .wheel-page__title,
+  .wheel-page__clock {
+    border-color: #7d6430;
+    color: #ecd9a5;
+    background: rgb(19 29 23 / 92%);
+  }
+}
+
 .wheel-canvas-wrapper {
   position: relative;
   display: flex;
@@ -363,6 +380,20 @@ $wheel-glow: rgb(74 158 255 / 15%);
       height: calc(80px * var(--pointer-scale, 1));
       right: calc(-75px * var(--pointer-scale, 1));
       transform: translateY(calc(-50% + 35px * var(--pointer-scale, 1))) rotate(0deg);
+    }
+  }
+
+  &--vegas {
+    width: calc(190px * var(--pointer-scale, 1));
+    height: calc(190px * var(--pointer-scale, 1));
+    right: calc(-155px * var(--pointer-scale, 1));
+    transform: translateY(calc(-50% + 18px * var(--pointer-scale, 1))) rotate(-35deg);
+
+    @media (width <= 768px) {
+      width: calc(62px * var(--pointer-scale, 1));
+      height: calc(62px * var(--pointer-scale, 1));
+      right: calc(-68px * var(--pointer-scale, 1));
+      transform: translateY(calc(-50% + 6px * var(--pointer-scale, 1))) rotate(-35deg);
     }
   }
 
@@ -703,6 +734,14 @@ $wheel-glow: rgb(74 158 255 / 15%);
     animation: fade-in 0.2s ease;
   }
 
+  &__overlay--vegas {
+    background:
+      radial-gradient(circle at 20% 20%, rgb(255 206 84 / 20%), transparent 40%),
+      radial-gradient(circle at 80% 15%, rgb(231 76 60 / 18%), transparent 35%),
+      radial-gradient(circle at 50% 85%, rgb(46 204 113 / 12%), transparent 40%),
+      rgb(0 0 0 / 82%);
+  }
+
   &__box {
     position: relative;
     z-index: 2;
@@ -717,6 +756,50 @@ $wheel-glow: rgb(74 158 255 / 15%);
     width: 92%;
     max-height: 94vh;
     overflow: hidden;
+  }
+
+  &__box--vegas {
+    border: 3px solid #d6b35f;
+    background:
+      radial-gradient(circle at top, rgb(255 225 139 / 10%), transparent 45%),
+      linear-gradient(180deg, #1a1e22 0%, #101315 100%);
+    box-shadow:
+      0 0 0 2px rgb(215 170 63 / 35%),
+      0 0 26px rgb(215 170 63 / 45%),
+      0 16px 48px rgb(0 0 0 / 55%);
+    animation:
+      slide-up 0.3s ease,
+      vegas-pulse 1.6s ease-in-out infinite;
+  }
+
+  &__box--vegas::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: 16px;
+    pointer-events: none;
+    background:
+      radial-gradient(circle, rgb(255 213 106 / 28%) 0 28%, transparent 30% 100%) 0 0 / 26px 26px,
+      radial-gradient(circle, rgb(231 76 60 / 22%) 0 23%, transparent 25% 100%) 13px 13px / 26px 26px;
+    opacity: 0.55;
+    z-index: 0;
+    animation: vegas-lights 2.2s linear infinite;
+  }
+
+  &__box--vegas > * {
+    position: relative;
+    z-index: 1;
+  }
+
+  &__jackpot {
+    margin: 0 0 0.65rem;
+    font-size: 1.05rem;
+    letter-spacing: 0.22em;
+    font-weight: 900;
+    color: #ffd56a;
+    text-shadow:
+      0 0 8px rgb(255 213 106 / 75%),
+      0 0 16px rgb(255 213 106 / 45%);
   }
 
   &__content {
@@ -768,6 +851,20 @@ $wheel-glow: rgb(74 158 255 / 15%);
     @media (width <= 600px) {
       width: 108px;
       height: 108px;
+    }
+  }
+
+  &__boca-not-found {
+    margin: 0;
+    font-size: 2rem;
+    font-weight: 900;
+    color: #ff4d4f;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    text-shadow: 0 0 10px rgb(255 77 79 / 35%);
+
+    @media (width <= 600px) {
+      font-size: 1.4rem;
     }
   }
 
@@ -920,6 +1017,37 @@ $wheel-glow: rgb(74 158 255 / 15%);
   to {
     transform: translateY(0);
     opacity: 1;
+  }
+}
+
+@keyframes vegas-pulse {
+  0%,
+  100% {
+    box-shadow:
+      0 0 0 2px rgb(215 170 63 / 35%),
+      0 0 26px rgb(215 170 63 / 45%),
+      0 16px 48px rgb(0 0 0 / 55%);
+  }
+
+  50% {
+    box-shadow:
+      0 0 0 2px rgb(255 214 113 / 55%),
+      0 0 38px rgb(255 214 113 / 75%),
+      0 18px 54px rgb(0 0 0 / 60%);
+  }
+}
+
+@keyframes vegas-lights {
+  from {
+    background-position:
+      0 0,
+      13px 13px;
+  }
+
+  to {
+    background-position:
+      26px 26px,
+      39px 39px;
   }
 }
 
