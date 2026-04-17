@@ -60,7 +60,14 @@ const getTelegramProgress = (remainingSeconds) => {
   return Math.min(elapsed / Math.abs(PROMOTED_THRESHOLD), 1);
 };
 
-const WinnerModal = ({ winner, winnerImage, onClose, onRemoveAndClose, confettiColors }) => {
+const WinnerModal = ({
+  winner,
+  winnerImage,
+  winnerHouse,
+  onClose,
+  onRemoveAndClose,
+  confettiColors,
+}) => {
   const [remainingSeconds, setRemainingSeconds] = useState(
     COUNTDOWN_TOTAL_SECONDS,
   );
@@ -109,6 +116,7 @@ const WinnerModal = ({ winner, winnerImage, onClose, onRemoveAndClose, confettiC
     ? Math.abs(remainingSeconds) - Math.abs(PROMOTED_THRESHOLD)
     : 0;
   const showPromotedArrival = promoted && promotedElapsed < 0;
+  const houseTheme = winnerHouse?.theme ?? null;
 
   const closeWithState = (callback) => {
     const isTelegramWalking = remainingSeconds < 0 && !promoted;
@@ -138,6 +146,15 @@ const WinnerModal = ({ winner, winnerImage, onClose, onRemoveAndClose, confettiC
       {promoted && <Confetti key="promoted" active colors={confettiColors} />}
       <div
         className="winner-modal__box"
+        style={
+          houseTheme
+            ? {
+                "--winner-accent": houseTheme.accent,
+                "--winner-accent-hover": houseTheme.accentHover,
+                "--winner-house-border": houseTheme.border,
+              }
+            : undefined
+        }
         role="dialog"
         aria-modal="true"
         aria-label="Ganador"
@@ -152,6 +169,15 @@ const WinnerModal = ({ winner, winnerImage, onClose, onRemoveAndClose, confettiC
           />
         )}
         <p className="winner-modal__name">{winner}</p>
+        {winnerHouse && (
+          <div className="winner-modal__house">
+            <img
+              className="winner-modal__house-logo"
+              src={winnerHouse.logo}
+              alt={`Escudo de ${winnerHouse.name}`}
+            />
+          </div>
+        )}
         <div className="winner-modal__content">
           {remainingSeconds > 0 && (
             <p

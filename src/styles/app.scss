@@ -707,18 +707,20 @@ $wheel-glow: rgb(74 158 255 / 15%);
     position: relative;
     z-index: 2;
     background: $bg-panel;
-    border: 1px solid $border-panel;
+    border: 2px solid var(--winner-house-border, #{$border-panel});
     border-radius: 20px;
-    padding: 3rem 3.5rem;
+    padding: 1.5rem 2rem;
     text-align: center;
     box-shadow: 0 8px 40px rgb(0 0 0 / 50%);
     animation: slide-up 0.3s ease;
-    max-width: 560px;
+    max-width: 520px;
     width: 92%;
+    max-height: 94vh;
+    overflow: hidden;
   }
 
   &__content {
-    min-height: 120px;
+    min-height: 90px;
     width: 100%;
     display: flex;
     flex-direction: column;
@@ -727,35 +729,54 @@ $wheel-glow: rgb(74 158 255 / 15%);
   }
 
   &__photo {
-    width: 320px;
-    height: 320px;
+    width: 230px;
+    height: 230px;
     border-radius: 50%;
     object-fit: cover;
     object-position: top;
-    margin-bottom: 1.5rem;
-    border: 4px solid $accent;
+    margin-bottom: 0.85rem;
+    border: 4px solid var(--winner-accent, #{$accent});
     box-shadow: 0 4px 24px rgb(0 0 0 / 40%);
 
     @media (width <= 600px) {
-      width: 240px;
-      height: 240px;
+      width: 180px;
+      height: 180px;
     }
   }
 
   &__name {
-    font-size: 2.25rem;
+    font-size: 2rem;
     font-weight: 700;
     color: $text-primary;
-    margin-bottom: 1.25rem;
+    margin-bottom: 0.5rem;
     overflow-wrap: break-word;
   }
 
+  &__house {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 0.65rem;
+  }
+
+  &__house-logo {
+    width: 128px;
+    height: 128px;
+    object-fit: contain;
+    filter: drop-shadow(0 2px 8px rgb(0 0 0 / 45%));
+
+    @media (width <= 600px) {
+      width: 108px;
+      height: 108px;
+    }
+  }
+
   &__countdown {
-    font-size: 3rem;
+    font-size: 2.4rem;
     font-weight: 800;
     font-variant-numeric: tabular-nums;
     letter-spacing: 0.05em;
-    margin-bottom: 1.3rem;
+    margin-bottom: 0.65rem;
     transition: color 0.4s ease;
     display: flex;
     align-items: center;
@@ -778,6 +799,7 @@ $wheel-glow: rgb(74 158 255 / 15%);
     gap: 0.75rem;
     justify-content: center;
     flex-wrap: wrap;
+    margin-top: 0;
   }
 
   &__btn {
@@ -790,12 +812,12 @@ $wheel-glow: rgb(74 158 255 / 15%);
     transition:
       background-color 0.15s,
       transform 0.1s;
-    background: $accent;
+    background: var(--winner-accent, #{$accent});
     color: #fff;
 
     &:hover {
       transform: scale(1.03);
-      background: $accent-hover;
+      background: var(--winner-accent-hover, #{$accent-hover});
     }
   }
 
