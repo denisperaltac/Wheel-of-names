@@ -1,4 +1,4 @@
-const PaletteSelector = ({ onOpenModal, onRandom, onOpenNames, nameCount }) => (
+const PaletteSelector = ({ onOpenModal, onRandom, onOpenNames, onMirror, nameCount }) => (
   <div className="palette-actions">
     <button
       type="button"
@@ -43,6 +43,26 @@ const PaletteSelector = ({ onOpenModal, onRandom, onOpenNames, nameCount }) => (
         <path d="M2 6h1.9c1.5 0 2.9.9 3.6 2.2" />
         <path d="M22 18h-5.9c-1.3 0-2.6-.7-3.3-1.8l-.5-.8" />
         <path d="m18 14 4 4-4 4" />
+      </svg>
+    </button>
+    <button
+      type="button"
+      className="palette-actions__btn"
+      onClick={onMirror}
+      aria-label="Invertir nombres"
+      title="Invertir nombres"
+    >
+      <svg
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1.5"
+        strokeLinecap="round"
+        aria-hidden="true"
+      >
+        <path d="M3 12C3 16.2426 3 18.364 4.31802 19.682C5.63604 21 7.75736 21 12 21M12 3C7.75736 3 5.63604 3 4.31802 4.31802C3.50241 5.13363 3.19151 6.25685 3.073 8" />
+        <path d="M11 21H15C17.8284 21 19.2426 21 20.1213 20.1213C21 19.2426 21 17.8284 21 15V9C21 6.17157 21 4.75736 20.1213 3.87868C19.2426 3 17.8284 3 15 3H11" strokeDasharray="2.5 3" />
+        <path d="M12 22L12 2" />
       </svg>
     </button>
     <button

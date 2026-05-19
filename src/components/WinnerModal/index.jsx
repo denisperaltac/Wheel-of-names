@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 
 import { Confetti } from "../Confetti";
+import { PumpkinConfetti } from "../PumpkinConfetti";
 
 const COUNTDOWN_TOTAL_SECONDS = 150;
 const PROMOTED_THRESHOLD = -60;
@@ -141,12 +142,6 @@ const WinnerModal = ({
     callback({ telegramWalking: isTelegramWalking });
   };
 
-  const handleOverlayKeyDown = (e) => {
-    if (e.key === "Enter" || e.key === " ") {
-      closeWithState(onClose);
-    }
-  };
-
   const handleBoxKeyDown = (e) => {
     e.stopPropagation();
   };
@@ -154,14 +149,13 @@ const WinnerModal = ({
   return (
     <div
       className={`winner-modal__overlay${isVegasTheme ? " winner-modal__overlay--vegas" : ""}`}
-      onClick={() => closeWithState(onClose)}
-      onKeyDown={handleOverlayKeyDown}
-      role="button"
-      tabIndex={0}
-      aria-label="Cerrar modal"
     >
-      <Confetti active={!!winner} colors={confettiColors} />
-      {promoted && <Confetti key="promoted" active colors={confettiColors} />}
+      {isVegasTheme ? (
+        <PumpkinConfetti active={!!winner} />
+      ) : (
+        <Confetti active={!!winner} colors={confettiColors} />
+      )}
+      {promoted && !isVegasTheme && <Confetti key="promoted" active colors={confettiColors} />}
       <div
         className={`winner-modal__box${isVegasTheme ? " winner-modal__box--vegas" : ""}`}
         style={

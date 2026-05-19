@@ -1565,3 +1565,31 @@ $wheel-glow: rgb(74 158 255 / 15%);
   }
 }
 
+.pumpkin-confetti {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 1;
+  overflow: hidden;
+
+  &__item {
+    position: absolute;
+    bottom: -80px;
+    animation: pumpkin-fly linear forwards;
+  }
+}
+
+@keyframes pumpkin-fly {
+  0% {
+    transform: translateY(0) translateX(0) rotate(0deg);
+    opacity: 1;
+  }
+  20% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(-110vh) translateX(var(--pumpkin-drift)) rotate(var(--pumpkin-rotation));
+    opacity: 0;
+  }
+}
+

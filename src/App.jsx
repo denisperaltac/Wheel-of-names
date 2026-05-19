@@ -129,19 +129,50 @@ const WheelOfNames = () => {
       const parsed = stored ? JSON.parse(stored) : null;
 
       if (Array.isArray(parsed) && parsed.length > 0) {
-        const merged = Array.from(parsed);
+        const deduped = [];
+        const seen = new Set();
 
-        DRIVER_NAMES.forEach((name) => {
-          if (!merged.includes(name)) {
-            merged.push(name);
+        for (const name of parsed) {
+          const rev = name.split("").reverse().join("");
+          const key = name < rev ? `${name}|${rev}` : `${rev}|${name}`;
+
+          if (seen.has(key)) continue;
+
+          seen.add(key);
+
+          if (DRIVER_NAMES.includes(name)) {
+            deduped.push(name);
+          } else if (DRIVER_NAMES.includes(rev)) {
+            deduped.push(rev);
+          } else {
+            deduped.push(name);
           }
-        });
-        setNames(merged);
+        }
+
+        const hasOriginalNames = DRIVER_NAMES.some((name) =>
+          deduped.includes(name),
+        );
+
+        if (hasOriginalNames) {
+          DRIVER_NAMES.forEach((name) => {
+            if (!deduped.includes(name)) {
+              deduped.push(name);
+            }
+          });
+        }
+
+        setNames(deduped);
       }
     } catch {
       // Ignorar errores de localStorage
     }
   }, []);
+
+  const [mirrored, setMirrored] = useState(false);
+
+  const displayNames = mirrored
+    ? names.map((n) => n.split("").reverse().join(""))
+    : names;
 
   const [spinning, setSpinning] = useState(false);
   const [winner, setWinner] = useState(null);
@@ -241,6 +272,10 @@ const WheelOfNames = () => {
     saveNames(updated);
   };
 
+  const handleMirror = () => {
+    setMirrored((prev) => !prev);
+  };
+
   const handleReset = () => {
     setPastWinners([]);
     saveNames(DRIVER_NAMES);
@@ -295,6 +330,7 @@ const WheelOfNames = () => {
 
   const handleRemoveAndClose = ({ telegramWalking } = {}) => {
     const elapsed = Date.now() - (modalOpenedAt.current ?? 0);
+    const originalName = mirrored ? winner.split("").reverse().join("") : winner;
 
     if (telegramWalking) {
       setToast({ name: winner, image: '/MuchoTexto.jpg' });
@@ -302,8 +338,8 @@ const WheelOfNames = () => {
       setToast({ name: winner });
     }
 
-    saveNames(names.filter((n) => n !== winner));
-    setPastWinners((prev) => [...prev, winner]);
+    saveNames(names.filter((n) => n !== originalName));
+    setPastWinners((prev) => [...prev, originalName]);
     setWinner(null);
     setWinnerBadge(null);
     setWinnerConfettiColors(null);
@@ -318,6 +354,7 @@ const WheelOfNames = () => {
         onOpenModal={() => setPaletteModalOpen(true)}
         onRandom={handleRandomPalette}
         onOpenNames={() => setNamesModalOpen(true)}
+        onMirror={handleMirror}
         nameCount={names.length}
       />
 
@@ -325,7 +362,7 @@ const WheelOfNames = () => {
         <div className="wheel-page__left">
           {names.length >= 1 ? (
             <WheelCanvas
-              names={names}
+              names={displayNames}
               spinning={spinning}
               onSpinEnd={handleSpinEnd}
               onClick={handleSpin}

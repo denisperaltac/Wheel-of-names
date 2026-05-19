@@ -15,7 +15,12 @@ const DRIVER_NAMES = DRIVERS.map((d) => d.name);
 const getDriverImage = (name) => {
   const driver = DRIVERS.find((d) => d.name === name);
 
-  return driver ? driver.image : null;
+  if (driver) return driver.image;
+
+  const reversed = name.split("").reverse().join("");
+  const reversedDriver = DRIVERS.find((d) => d.name === reversed);
+
+  return reversedDriver ? reversedDriver.image : null;
 };
 
 export { DRIVERS, DRIVER_NAMES, getDriverImage };
