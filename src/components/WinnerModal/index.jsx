@@ -127,7 +127,7 @@ const WinnerModal = ({
 
   const displayImage =
     winner === "Jose" && remainingSeconds <= 0
-      ? "/drivers/JoseOld.jpg"
+      ? "/drivers/JoseOld.png"
       : winnerImage
         ? `/${winnerImage}`
         : null;
