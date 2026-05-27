@@ -197,16 +197,18 @@ const WinnerModal = ({
         )}
         <div className="winner-modal__content">
           {remainingSeconds > 0 && (
-            <p
-              className="winner-modal__countdown"
-              style={{ color: countdownColor }}
-              aria-live="polite"
-            >
-              <span className="winner-modal__countdown-icon">
-                {countdownIcon}
+            <div className="winner-modal__countdown" aria-live="polite">
+              <span className="winner-modal__countdown-time">
+                <span
+                  className="winner-modal__countdown-dot"
+                  style={{
+                    backgroundColor: countdownColor,
+                    animationDuration: `${Math.max(0.4, remainingSeconds / 100)}s`,
+                  }}
+                />
+                {formatTime(remainingSeconds)}
               </span>
-              {formatTime(remainingSeconds)}
-            </p>
+            </div>
           )}
 
           {showTelegram && (
