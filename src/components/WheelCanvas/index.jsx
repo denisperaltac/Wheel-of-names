@@ -158,7 +158,6 @@ const drawWheel = (
       displayName = `${displayName}…`;
     }
 
-    const textY = fontSize * 0.38;
     const showSegmentLogo = segmentLogos?.length && logoImages;
     const logoSize = showSegmentLogo
       ? Math.min(fontSize * 1.15, 30 * scale)
@@ -173,18 +172,28 @@ const drawWheel = (
       : radius - 12 * scale;
 
     if (showSegmentLogo) {
+      const labelY = 0;
+
+      ctx.textBaseline = 'middle';
+
       const logoSrc =
         segmentLogos[(i + logoRotationStep) % segmentLogos.length];
       const logo = logoImages.get(logoSrc);
 
       if (logo?.complete && logo.naturalWidth > 0) {
-        const logoY = textY - logoSize / 2;
-
-        ctx.drawImage(logo, logoX, logoY, logoSize, logoSize);
+        ctx.drawImage(
+          logo,
+          logoX,
+          labelY - logoSize / 2,
+          logoSize,
+          logoSize,
+        );
       }
-    }
 
-    ctx.fillText(displayName, textX, textY);
+      ctx.fillText(displayName, textX, labelY);
+    } else {
+      ctx.fillText(displayName, textX, fontSize * 0.38);
+    }
     ctx.restore();
   });
 
