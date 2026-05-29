@@ -171,6 +171,18 @@ const FOOTBALL_TEAMS = [
   },
 ];
 
+const pickFootballTeam = (usedIds) => {
+  const available = FOOTBALL_TEAMS.filter((team) => !usedIds.includes(team.id));
+
+  if (available.length === 0) {
+    const team = securePick(FOOTBALL_TEAMS);
+    return { team, usedIds: [team.id] };
+  }
+
+  const team = securePick(available);
+  return { team, usedIds: [...usedIds, team.id] };
+};
+
 const WheelOfNames = () => {
   const [names, setNames] = useState(DRIVER_NAMES);
 
@@ -230,6 +242,7 @@ const WheelOfNames = () => {
   const [winnerBadge, setWinnerBadge] = useState(null);
   const [winnerConfettiColors, setWinnerConfettiColors] = useState(null);
   const [pastWinners, setPastWinners] = useState([]);
+  const [usedFootballTeamIds, setUsedFootballTeamIds] = useState([]);
   const [toast, setToast] = useState(null);
   const modalOpenedAt = useRef(null);
 
@@ -330,6 +343,7 @@ const WheelOfNames = () => {
 
   const handleReset = () => {
     setPastWinners([]);
+    setUsedFootballTeamIds([]);
     saveNames(DRIVER_NAMES);
   };
 
@@ -342,13 +356,17 @@ const WheelOfNames = () => {
   };
 
   const handleSpinEnd = (winnerName) => {
-    const selectedBadge = isHarryPotterWheel
-      ? securePick(HOGWARTS_HOUSES)
-      : isFootballTeamsWheel
-        ? securePick(FOOTBALL_TEAMS)
-        : isGotWheel
-          ? securePick(GOT_FACTIONS)
-          : null;
+    let selectedBadge = null;
+
+    if (isHarryPotterWheel) {
+      selectedBadge = securePick(HOGWARTS_HOUSES);
+    } else if (isFootballTeamsWheel) {
+      const { team, usedIds } = pickFootballTeam(usedFootballTeamIds);
+      selectedBadge = team;
+      setUsedFootballTeamIds(usedIds);
+    } else if (isGotWheel) {
+      selectedBadge = securePick(GOT_FACTIONS);
+    }
 
     setSpinning(false);
     setWinner(winnerName);

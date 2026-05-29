@@ -213,6 +213,8 @@ export const PALETTES = {
     id: "footballTeams",
     name: "Equipos Futbol",
     colors: PALETTE_FOOTBALL_TEAMS,
+    pointer: "/pointers/Botin.png",
+    pointerClass: "botin",
     center: "/centers/Pelota.png",
   },
 };

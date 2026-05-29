@@ -1,3 +1,4 @@
+@use 'sass:color';
 @use 'variables' as *;
 
 html,
@@ -394,6 +395,24 @@ $wheel-glow: rgb(74 158 255 / 15%);
       width: calc(68px * var(--pointer-scale, 1));
       height: calc(68px * var(--pointer-scale, 1));
       right: calc(-62px * var(--pointer-scale, 1));
+      transform: translateY(calc(-50% + 8px * var(--pointer-scale, 1))) rotate(0deg);
+    }
+  }
+
+  &--botin {
+    width: calc(200px * var(--pointer-scale, 1));
+    height: calc(200px * var(--pointer-scale, 1));
+    right: calc(-165px * var(--pointer-scale, 1));
+    transform: translateY(calc(-50% + 15px * var(--pointer-scale, 1))) rotate(0deg);
+
+    img {
+      transform: scaleX(-1);
+    }
+
+    @media (width <=768px) {
+      width: calc(65px * var(--pointer-scale, 1));
+      height: calc(65px * var(--pointer-scale, 1));
+      right: calc(-70px * var(--pointer-scale, 1));
       transform: translateY(calc(-50% + 8px * var(--pointer-scale, 1))) rotate(0deg);
     }
   }
@@ -1282,7 +1301,7 @@ $wheel-glow: rgb(74 158 255 / 15%);
 
   &:hover {
     border-color: $accent;
-    background: lighten($bg-dark, 3%);
+    background: color.adjust($bg-dark, $lightness: 3%);
     transform: translateY(-2px);
     box-shadow: 0 4px 16px rgb(0 0 0 / 40%);
   }
