@@ -18,6 +18,7 @@ import { PALETTES, PALETTE_IDS } from './components/palettes';
 import { securePick } from './utils/secureRandom';
 
 const STORAGE_KEY = 'wheel-names';
+const PALETTE_ROTATION_MS = 1800;
 const HOGWARTS_HOUSES = [
   {
     id: 'gryffindor',
@@ -305,7 +306,7 @@ const WheelOfNames = () => {
 
     const intervalId = setInterval(() => {
       setHarryPaletteStep((prev) => prev + 1);
-    }, 1000);
+    }, PALETTE_ROTATION_MS);
 
     return () => clearInterval(intervalId);
   }, [isHarryPotterWheel, isFootballTeamsWheel, spinning]);
@@ -444,6 +445,12 @@ const WheelOfNames = () => {
               pointerType={palettePointerType}
               center={paletteCenter}
               wheelStyle={paletteWheelStyle}
+              segmentLogos={
+                isFootballTeamsWheel
+                  ? FOOTBALL_TEAMS.map((team) => team.logo)
+                  : null
+              }
+              logoRotationStep={harryPaletteStep}
             />
           ) : (
             <DailyEndScreen />

@@ -47,6 +47,9 @@ const drawWheel = (
   colors,
   skipHub = false,
   wheelStyle = null,
+  segmentLogos = null,
+  logoImages = null,
+  logoRotationStep = 0,
 ) => {
   const palette = colors && colors.length > 0 ? colors : DEFAULT_COLORS;
   const scale = size / BASE_SIZE;
@@ -155,7 +158,33 @@ const drawWheel = (
       displayName = `${displayName}…`;
     }
 
-    ctx.fillText(displayName, radius - 12 * scale, fontSize * 0.38);
+    const textY = fontSize * 0.38;
+    const showSegmentLogo = segmentLogos?.length && logoImages;
+    const logoSize = showSegmentLogo
+      ? Math.min(fontSize * 1.15, 30 * scale)
+      : 0;
+    const logoGap = 5 * scale;
+    const outerMargin = 8 * scale;
+    const logoX = showSegmentLogo
+      ? radius - outerMargin - logoSize
+      : 0;
+    const textX = showSegmentLogo
+      ? logoX - logoGap
+      : radius - 12 * scale;
+
+    if (showSegmentLogo) {
+      const logoSrc =
+        segmentLogos[(i + logoRotationStep) % segmentLogos.length];
+      const logo = logoImages.get(logoSrc);
+
+      if (logo?.complete && logo.naturalWidth > 0) {
+        const logoY = textY - logoSize / 2;
+
+        ctx.drawImage(logo, logoX, logoY, logoSize, logoSize);
+      }
+    }
+
+    ctx.fillText(displayName, textX, textY);
     ctx.restore();
   });
 
@@ -194,6 +223,8 @@ const WheelCanvas = ({
   pointerType,
   center,
   wheelStyle,
+  segmentLogos = null,
+  logoRotationStep = 0,
 }) => {
   const [claudeInput, setClaudeInput] = useState('');
   const claudeMatch = claudeInput.trim().toLowerCase() === CLAUDE_PHRASE.toLowerCase();
@@ -208,6 +239,61 @@ const WheelCanvas = ({
   const lastIdleTimeRef = useRef(null);
 
   const [size, setSize] = useState(BASE_SIZE);
+  const [logoLoadVersion, setLogoLoadVersion] = useState(0);
+  const logoImagesRef = useRef(new Map());
+
+  useEffect(() => {
+    if (!segmentLogos?.length) {
+      logoImagesRef.current = new Map();
+      return () => {};
+    }
+
+    let cancelled = false;
+    const pending = new Set(segmentLogos);
+    const loaded = new Map();
+
+    const markLoaded = (src, img) => {
+      if (cancelled) return;
+
+      loaded.set(src, img);
+      pending.delete(src);
+
+      if (pending.size === 0) {
+        logoImagesRef.current = loaded;
+        setLogoLoadVersion((v) => v + 1);
+      }
+    };
+
+    segmentLogos.forEach((src) => {
+      const existing = logoImagesRef.current.get(src);
+
+      if (existing?.complete) {
+        markLoaded(src, existing);
+        return;
+      }
+
+      const img = new Image();
+
+      img.onload = () => markLoaded(src, img);
+      img.onerror = () => {
+        pending.delete(src);
+
+        if (pending.size === 0) {
+          logoImagesRef.current = loaded;
+          setLogoLoadVersion((v) => v + 1);
+        }
+      };
+      img.src = src;
+
+      if (img.complete) {
+        markLoaded(src, img);
+      }
+    });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [segmentLogos]);
 
   const draw = useCallback(() => {
     const canvas = canvasRef.current;
@@ -218,8 +304,28 @@ const WheelCanvas = ({
 
     const ctx = canvas.getContext('2d');
 
-    drawWheel(ctx, names, angleRef.current, size, colors, !!center, wheelStyle);
-  }, [names, size, colors, center, wheelStyle]);
+    drawWheel(
+      ctx,
+      names,
+      angleRef.current,
+      size,
+      colors,
+      !!center,
+      wheelStyle,
+      segmentLogos,
+      segmentLogos?.length ? logoImagesRef.current : null,
+      logoRotationStep,
+    );
+  }, [
+    names,
+    size,
+    colors,
+    center,
+    wheelStyle,
+    segmentLogos,
+    logoRotationStep,
+    logoLoadVersion,
+  ]);
 
   useEffect(() => {
     draw();
