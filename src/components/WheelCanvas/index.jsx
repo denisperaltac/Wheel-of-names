@@ -105,9 +105,12 @@ const drawWheel = (
     ctx.closePath();
     ctx.fillStyle = grad;
     ctx.fill();
-    ctx.strokeStyle = isVegas ? '#d4b15a' : 'rgba(255,255,255,0.8)';
-    ctx.lineWidth = isVegas ? 2.2 * scale : 2.5 * scale;
-    ctx.stroke();
+
+    if (isVegas) {
+      ctx.strokeStyle = '#d4b15a';
+      ctx.lineWidth = 2.2 * scale;
+      ctx.stroke();
+    }
 
     ctx.save();
     ctx.translate(cx, cy);
@@ -160,10 +163,10 @@ const drawWheel = (
 
     const showSegmentLogo = segmentLogos?.length && logoImages;
     const logoSize = showSegmentLogo
-      ? Math.min(fontSize * 1.15, 30 * scale)
+      ? Math.min(fontSize * 1.45, 42 * scale)
       : 0;
-    const logoGap = 5 * scale;
-    const outerMargin = 8 * scale;
+    const logoGap = 6 * scale;
+    const outerMargin = 6 * scale;
     const logoX = showSegmentLogo
       ? radius - outerMargin - logoSize
       : 0;

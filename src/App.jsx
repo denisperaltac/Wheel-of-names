@@ -448,9 +448,15 @@ const WheelOfNames = () => {
               segmentLogos={
                 isFootballTeamsWheel
                   ? FOOTBALL_TEAMS.map((team) => team.logo)
-                  : null
+                  : isHarryPotterWheel
+                    ? HOGWARTS_HOUSES.map((house) => house.logo)
+                    : null
               }
-              logoRotationStep={harryPaletteStep}
+              logoRotationStep={
+                isFootballTeamsWheel || isHarryPotterWheel
+                  ? harryPaletteStep
+                  : 0
+              }
             />
           ) : (
             <DailyEndScreen />

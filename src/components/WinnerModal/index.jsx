@@ -176,27 +176,31 @@ const WinnerModal = ({
         onKeyDown={handleBoxKeyDown}
       >
         {isVegasTheme && <p className="winner-modal__jackpot">JACKPOT WINNER</p>}
-        {displayImage && (
-          <img
-            className="winner-modal__photo"
-            src={displayImage}
-            alt={displayName}
-          />
-        )}
-        <p className="winner-modal__name">{displayName}</p>
-        {(winnerBadge?.logo || showBocaNotFound) && (
-          <div className="winner-modal__house">
-            {showBocaNotFound ? (
-              <p className="winner-modal__boca-not-found">404 Not Found</p>
-            ) : (
+        {(displayImage || winnerBadge?.logo || showBocaNotFound) && (
+          <div className="winner-modal__hero">
+            {displayImage && (
               <img
-                className="winner-modal__house-logo"
-                src={winnerBadge.logo}
-                alt={`Escudo de ${winnerBadge.name}`}
+                className="winner-modal__photo"
+                src={displayImage}
+                alt={displayName}
               />
+            )}
+            {(winnerBadge?.logo || showBocaNotFound) && (
+              <div className="winner-modal__house">
+                {showBocaNotFound ? (
+                  <p className="winner-modal__boca-not-found">404 Not Found</p>
+                ) : (
+                  <img
+                    className="winner-modal__house-logo"
+                    src={winnerBadge.logo}
+                    alt={`Escudo de ${winnerBadge.name}`}
+                  />
+                )}
+              </div>
             )}
           </div>
         )}
+        <p className="winner-modal__name">{displayName}</p>
         <div className="winner-modal__content">
           {remainingSeconds > 0 && (
             <div className="winner-modal__countdown" aria-live="polite">
