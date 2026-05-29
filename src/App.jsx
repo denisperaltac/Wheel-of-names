@@ -7,7 +7,13 @@ import { PaletteSelector } from './components/PaletteSelector';
 import { PaletteModal } from './components/PaletteModal';
 import { NamesModal } from './components/NamesModal';
 import { DailyEndScreen } from './components/DailyEndScreen';
-import { DRIVER_NAMES, getDriverImage } from './components/drivers';
+import {
+  DRIVER_NAMES,
+  getDriverImage,
+  getGotImage,
+  formatGotDisplayName,
+  resolveDriverName,
+} from './components/drivers';
 import { PALETTES, PALETTE_IDS } from './components/palettes';
 import { securePick } from './utils/secureRandom';
 
@@ -59,6 +65,51 @@ const HOGWARTS_HOUSES = [
       text: '#c0c0c0',
       border: '#5d5d5d',
       confetti: ['#1a472a', '#25633b', '#5d5d5d', '#c0c0c0', '#f3f3f3'],
+    },
+  },
+];
+
+const GOT_FACTIONS = [
+  {
+    id: 'lannister',
+    name: 'Lannister',
+    displayLabel: 'Lannister',
+    imageFolder: 'Lannister',
+    nameFormat: 'suffix',
+    theme: {
+      accent: '#9b111e',
+      accentHover: '#b80c09',
+      text: '#d4af37',
+      border: '#5c0a0f',
+      confetti: ['#9b111e', '#7f0922', '#d4af37', '#1a1a1a', '#f5e6c8'],
+    },
+  },
+  {
+    id: 'stark',
+    name: 'Stark',
+    displayLabel: 'Stark',
+    imageFolder: 'Stark',
+    nameFormat: 'suffix',
+    theme: {
+      accent: '#4a4a4a',
+      accentHover: '#6b6b6b',
+      text: '#c8c8c8',
+      border: '#2b2b2b',
+      confetti: ['#2b2b2b', '#4a4a4a', '#8b9aab', '#c8c8c8', '#e8e8e8'],
+    },
+  },
+  {
+    id: 'whitewalker',
+    name: 'Whitewalker',
+    displayLabel: 'Whitewalker',
+    imageFolder: 'Whitewalkers',
+    nameFormat: 'prefix',
+    theme: {
+      accent: '#6b8cae',
+      accentHover: '#8aa8c8',
+      text: '#e8f4fc',
+      border: '#3d5a73',
+      confetti: ['#a8c8e8', '#6b8cae', '#3d5a73', '#e8f4fc', '#c5d8eb'],
     },
   },
 ];
@@ -209,6 +260,7 @@ const WheelOfNames = () => {
   const setPalette = (id) => setPaletteId(id);
   const isHarryPotterWheel = paletteId === 'harryPotter';
   const isFootballTeamsWheel = paletteId === 'footballTeams';
+  const isGotWheel = paletteId === 'got';
   const isVegasWheel = paletteId === 'vegas';
   const currentPalette = PALETTES[paletteId] ?? PALETTES.argentina;
   const paletteColors = useMemo(() => {
@@ -294,7 +346,9 @@ const WheelOfNames = () => {
       ? securePick(HOGWARTS_HOUSES)
       : isFootballTeamsWheel
         ? securePick(FOOTBALL_TEAMS)
-        : null;
+        : isGotWheel
+          ? securePick(GOT_FACTIONS)
+          : null;
 
     setSpinning(false);
     setWinner(winnerName);
@@ -381,7 +435,18 @@ const WheelOfNames = () => {
 
       <WinnerModal
         winner={winner}
-        winnerImage={winner ? getDriverImage(winner) : null}
+        winnerDisplayName={
+          winner && isGotWheel && winnerBadge
+            ? formatGotDisplayName(resolveDriverName(winner), winnerBadge)
+            : winner
+        }
+        winnerImage={
+          winner
+            ? isGotWheel && winnerBadge
+              ? getGotImage(winner, winnerBadge.imageFolder)
+              : getDriverImage(winner)
+            : null
+        }
         winnerBadge={winnerBadge}
         isVegasTheme={isVegasWheel}
         onClose={handleClose}

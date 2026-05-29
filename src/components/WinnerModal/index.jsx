@@ -65,6 +65,7 @@ const BOCA_NOT_FOUND_NAMES = new Set(["Gio", "Pelu"]);
 
 const WinnerModal = ({
   winner,
+  winnerDisplayName,
   winnerImage,
   winnerBadge,
   isVegasTheme,
@@ -136,6 +137,7 @@ const WinnerModal = ({
     : 0;
   const showPromotedArrival = promoted && promotedElapsed < 0;
   const houseTheme = winnerBadge?.theme ?? null;
+  const displayName = winnerDisplayName ?? winner;
 
   const closeWithState = (callback) => {
     const isTelegramWalking = remainingSeconds < 0 && !promoted;
@@ -178,11 +180,11 @@ const WinnerModal = ({
           <img
             className="winner-modal__photo"
             src={displayImage}
-            alt={winner}
+            alt={displayName}
           />
         )}
-        <p className="winner-modal__name">{winner}</p>
-        {winnerBadge && (
+        <p className="winner-modal__name">{displayName}</p>
+        {(winnerBadge?.logo || showBocaNotFound) && (
           <div className="winner-modal__house">
             {showBocaNotFound ? (
               <p className="winner-modal__boca-not-found">404 Not Found</p>

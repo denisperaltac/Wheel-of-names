@@ -5,10 +5,11 @@ const SHUFFLED_IDS = [
   'river',
   'meli',
   'harryPotter',
+  'got',
   'footballTeams',
   'claude',
   'vegas',
-  ...PALETTE_IDS.filter((id) => !['argentina', 'river', 'meli', 'harryPotter', 'footballTeams', 'claude', 'vegas'].includes(id)),
+  ...PALETTE_IDS.filter((id) => !['argentina', 'river', 'meli', 'harryPotter', 'got', 'footballTeams', 'claude', 'vegas'].includes(id)),
 ];
 
 const buildConicGradient = (colors) => {

@@ -305,6 +305,11 @@ $wheel-glow: rgb(74 158 255 / 15%);
   box-shadow: none;
 }
 
+.wheel-page[data-palette='got'] .wheel-center {
+  width: calc(var(--wheel-size, 500px) * 0.28);
+  height: calc(var(--wheel-size, 500px) * 0.28);
+}
+
 .wheel-pointer {
   position: absolute;
   right: calc(-75px * var(--pointer-scale, 1));
@@ -376,6 +381,20 @@ $wheel-glow: rgb(74 158 255 / 15%);
       height: calc(80px * var(--pointer-scale, 1));
       right: calc(-75px * var(--pointer-scale, 1));
       transform: translateY(calc(-50% + 35px * var(--pointer-scale, 1))) rotate(0deg);
+    }
+  }
+
+  &--got {
+    width: calc(248px * var(--pointer-scale, 1));
+    height: calc(248px * var(--pointer-scale, 1));
+    right: calc(-218px * var(--pointer-scale, 1));
+    transform: translateY(calc(-50% + 10px * var(--pointer-scale, 1))) rotate(0deg);
+
+    @media (width <=768px) {
+      width: calc(68px * var(--pointer-scale, 1));
+      height: calc(68px * var(--pointer-scale, 1));
+      right: calc(-62px * var(--pointer-scale, 1));
+      transform: translateY(calc(-50% + 8px * var(--pointer-scale, 1))) rotate(0deg);
     }
   }
 
