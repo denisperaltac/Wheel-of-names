@@ -356,17 +356,28 @@ const WheelOfNames = () => {
     setSpinning(true);
   };
 
-  const handleSpinEnd = (winnerName) => {
+  const handleSpinEnd = (winnerName, badgeIndex) => {
     let selectedBadge = null;
+    let newUsedIds = usedFootballTeamIds;
 
-    if (isHarryPotterWheel) {
-      selectedBadge = securePick(HOGWARTS_HOUSES);
-    } else if (isFootballTeamsWheel) {
-      const { team, usedIds } = pickFootballTeam(usedFootballTeamIds);
-      selectedBadge = team;
-      setUsedFootballTeamIds(usedIds);
+    if (isFootballTeamsWheel && badgeIndex >= 0 && badgeIndex < FOOTBALL_TEAMS.length) {
+      const segmentTeam = FOOTBALL_TEAMS[badgeIndex];
+      if (!newUsedIds.includes(segmentTeam.id)) {
+        selectedBadge = segmentTeam;
+        newUsedIds = [...newUsedIds, segmentTeam.id];
+      } else {
+        const { team, usedIds } = pickFootballTeam(newUsedIds);
+        selectedBadge = team;
+        newUsedIds = usedIds;
+      }
+    } else if (isHarryPotterWheel && badgeIndex >= 0 && badgeIndex < HOGWARTS_HOUSES.length) {
+      selectedBadge = HOGWARTS_HOUSES[badgeIndex];
     } else if (isGotWheel) {
       selectedBadge = securePick(GOT_FACTIONS);
+    }
+
+    if (newUsedIds !== usedFootballTeamIds) {
+      setUsedFootballTeamIds(newUsedIds);
     }
 
     setSpinning(false);

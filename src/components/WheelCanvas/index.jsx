@@ -491,7 +491,10 @@ const WheelCanvas = ({
       } else {
         angleRef.current = targetAngleRef.current;
         draw();
-        onSpinEnd(names[winnerIndex]);
+        const badgeIndex = segmentLogos?.length
+          ? (winnerIndex + logoRotationStep) % segmentLogos.length
+          : -1;
+        onSpinEnd(names[winnerIndex], badgeIndex);
       }
     };
 
