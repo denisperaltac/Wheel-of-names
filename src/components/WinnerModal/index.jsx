@@ -106,7 +106,11 @@ const WinnerModal = ({
   useEffect(() => {
     setShowBocaNotFound(false);
 
-    if (!winner || winnerBadge?.id !== "boca" || !BOCA_NOT_FOUND_NAMES.has(winner)) {
+    if (
+      !winner ||
+      winnerBadge?.id !== "boca" ||
+      !BOCA_NOT_FOUND_NAMES.has(winner)
+    ) {
       return () => {};
     }
 
@@ -141,7 +145,7 @@ const WinnerModal = ({
 
   const closeWithState = (callback) => {
     const isTelegramWalking = remainingSeconds < 0 && !promoted;
-    callback({ telegramWalking: isTelegramWalking });
+    callback({ telegramWalking: isTelegramWalking, promoted });
   };
 
   const handleBoxKeyDown = (e) => {
@@ -157,7 +161,9 @@ const WinnerModal = ({
       ) : (
         <Confetti active={!!winner} colors={confettiColors} />
       )}
-      {promoted && !isVegasTheme && <Confetti key="promoted" active colors={confettiColors} />}
+      {promoted && !isVegasTheme && (
+        <Confetti key="promoted" active colors={confettiColors} />
+      )}
       <div
         className={`winner-modal__box${isVegasTheme ? " winner-modal__box--vegas" : ""}`}
         style={
@@ -175,7 +181,9 @@ const WinnerModal = ({
         onClick={(e) => e.stopPropagation()}
         onKeyDown={handleBoxKeyDown}
       >
-        {isVegasTheme && <p className="winner-modal__jackpot">JACKPOT WINNER</p>}
+        {isVegasTheme && (
+          <p className="winner-modal__jackpot">JACKPOT WINNER</p>
+        )}
         {(displayImage || winnerBadge?.logo || showBocaNotFound) && (
           <div className="winner-modal__hero">
             {displayImage && (
@@ -224,7 +232,15 @@ const WinnerModal = ({
                 alt="Telegrama"
                 className="winner-modal__track-telegram"
                 style={{
-                  left: `calc(${telegramProgress * 100}% - ${telegramProgress * 108}px)`,
+                  left: `calc(${telegramProgress * 100}% - ${telegramProgress * 108}px + 30px)`,
+                }}
+              />
+              <img
+                src="/Cartero.png"
+                alt="Cartero"
+                className="winner-modal__track-cartero"
+                style={{
+                  left: `calc(${telegramProgress * 100}% - ${telegramProgress * 108}px + 85px)`,
                 }}
               />
               <span className="winner-modal__track-house">🏠</span>
@@ -239,6 +255,11 @@ const WinnerModal = ({
                     src="/Telegrama.png"
                     alt="Telegrama"
                     className="winner-modal__track-telegram winner-modal__track-telegram--arrived"
+                  />
+                  <img
+                    src="/Cartero.png"
+                    alt="Cartero"
+                    className="winner-modal__track-cartero winner-modal__track-cartero--arrived"
                   />
                   <span className="winner-modal__track-house">🏠</span>
                 </div>

@@ -391,10 +391,12 @@ const WheelOfNames = () => {
     modalOpenedAt.current = Date.now();
   };
 
-  const handleClose = ({ telegramWalking } = {}) => {
+  const handleClose = ({ telegramWalking, promoted } = {}) => {
     const elapsed = Date.now() - (modalOpenedAt.current ?? 0);
 
-    if (telegramWalking) {
+    if (promoted) {
+      setToast({ name: winner, image: '/Afuera.png' });
+    } else if (telegramWalking) {
       setToast({ name: winner, image: '/MuchoTexto.jpg' });
     } else if (elapsed < 10000) {
       setToast({ name: winner });
@@ -412,11 +414,13 @@ const WheelOfNames = () => {
     saveNames([...names, name]);
   };
 
-  const handleRemoveAndClose = ({ telegramWalking } = {}) => {
+  const handleRemoveAndClose = ({ telegramWalking, promoted } = {}) => {
     const elapsed = Date.now() - (modalOpenedAt.current ?? 0);
     const originalName = mirrored ? winner.split("").reverse().join("") : winner;
 
-    if (telegramWalking) {
+    if (promoted) {
+      setToast({ name: winner, image: '/Afuera.png' });
+    } else if (telegramWalking) {
       setToast({ name: winner, image: '/MuchoTexto.jpg' });
     } else if (elapsed < 10000) {
       setToast({ name: winner });
@@ -499,6 +503,7 @@ const WheelOfNames = () => {
         <WinnerToast
           name={toast.name}
           image={toast.image}
+          right={toast.right}
           onDismiss={handleDismissToast}
         />
       )}
