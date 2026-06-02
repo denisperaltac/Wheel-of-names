@@ -307,7 +307,7 @@ const WheelCanvas = ({
     };
   }, [segmentLogos]);
 
-  const draw = useCallback(() => {
+  const drawCb = useCallback(() => {
     const canvas = canvasRef.current;
 
     if (!canvas || !names.length) {
@@ -339,9 +339,12 @@ const WheelCanvas = ({
     logoLoadVersion,
   ]);
 
+  const drawRef = useRef(drawCb);
+  drawRef.current = drawCb;
+
   useEffect(() => {
-    draw();
-  }, [draw]);
+    drawRef.current();
+  }, []);
 
   useEffect(() => {
     const roRef = { current: null };
@@ -438,7 +441,7 @@ const WheelCanvas = ({
       }
 
       lastIdleTimeRef.current = timestamp;
-      draw();
+      drawRef.current();
       idleAnimRef.current = requestAnimationFrame(tick);
     };
 
@@ -448,18 +451,31 @@ const WheelCanvas = ({
       if (idleAnimRef.current) {
         cancelAnimationFrame(idleAnimRef.current);
         idleAnimRef.current = null;
-        lastIdleTimeRef.current = null;
       }
     };
-  }, [spinning, draw]);
+  }, [spinning]);
+
+  const namesRef = useRef(names);
+  namesRef.current = names;
+  const segmentLogosRef = useRef(segmentLogos);
+  segmentLogosRef.current = segmentLogos;
+  const logoRotationStepRef = useRef(logoRotationStep);
+  logoRotationStepRef.current = logoRotationStep;
+  const onSpinEndRef = useRef(onSpinEnd);
+  onSpinEndRef.current = onSpinEnd;
 
   useEffect(() => {
-    if (!spinning || !names.length) {
+    if (!spinning || !namesRef.current.length) {
       return () => {};
     }
 
-    const segmentAngle = (2 * Math.PI) / names.length;
-    const winnerIndex = secureRandomInt(names.length);
+    const currentNames = namesRef.current;
+    const currentSegmentLogos = segmentLogosRef.current;
+    const currentLogoRotationStep = logoRotationStepRef.current;
+    const currentOnSpinEnd = onSpinEndRef.current;
+
+    const segmentAngle = (2 * Math.PI) / currentNames.length;
+    const winnerIndex = secureRandomInt(currentNames.length);
     const extraSpins = (5 + secureRandomInt(5)) * 2 * Math.PI;
     const targetSegmentCenter = winnerIndex * segmentAngle + segmentAngle / 2;
     const stopAngle = -targetSegmentCenter;
@@ -484,17 +500,17 @@ const WheelCanvas = ({
       angleRef.current =
         startAngleRef.current +
         (targetAngleRef.current - startAngleRef.current) * eased;
-      draw();
+      drawRef.current();
 
       if (progress < 1) {
         animRef.current = requestAnimationFrame(animate);
       } else {
         angleRef.current = targetAngleRef.current;
-        draw();
-        const badgeIndex = segmentLogos?.length
-          ? (winnerIndex + logoRotationStep) % segmentLogos.length
+        drawRef.current();
+        const badgeIndex = currentSegmentLogos?.length
+          ? (winnerIndex + currentLogoRotationStep) % currentSegmentLogos.length
           : -1;
-        onSpinEnd(names[winnerIndex], badgeIndex);
+        currentOnSpinEnd(currentNames[winnerIndex], badgeIndex);
       }
     };
 
@@ -503,10 +519,10 @@ const WheelCanvas = ({
     return () => {
       if (animRef.current) {
         cancelAnimationFrame(animRef.current);
+        animRef.current = null;
       }
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [spinning, draw]);
+  }, [spinning]);
 
   const handleClaudeSpin = () => {
     if (claudeMatch && !spinning) {

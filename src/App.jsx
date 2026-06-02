@@ -76,6 +76,7 @@ const GOT_FACTIONS = [
     name: 'Lannister',
     displayLabel: 'Lannister',
     imageFolder: 'Lannister',
+    logo: '/GOT/Logo Lannister.png',
     nameFormat: 'suffix',
     theme: {
       accent: '#9b111e',
@@ -90,6 +91,7 @@ const GOT_FACTIONS = [
     name: 'Stark',
     displayLabel: 'Stark',
     imageFolder: 'Stark',
+    logo: '/GOT/Logo Stark.png',
     nameFormat: 'suffix',
     theme: {
       accent: '#4a4a4a',
@@ -295,7 +297,7 @@ const WheelOfNames = () => {
   const paletteWheelStyle = currentPalette.wheelStyle ?? null;
 
   useEffect(() => {
-    if (!isHarryPotterWheel && !isFootballTeamsWheel) {
+    if (!isHarryPotterWheel && !isFootballTeamsWheel && !isGotWheel) {
       setHarryPaletteStep(0);
       return () => {};
     }
@@ -309,7 +311,7 @@ const WheelOfNames = () => {
     }, PALETTE_ROTATION_MS);
 
     return () => clearInterval(intervalId);
-  }, [isHarryPotterWheel, isFootballTeamsWheel, spinning]);
+  }, [isHarryPotterWheel, isFootballTeamsWheel, isGotWheel, spinning]);
 
   const handleRandomPalette = () => {
     const others = PALETTE_IDS.filter((id) => id !== paletteId);
@@ -372,6 +374,8 @@ const WheelOfNames = () => {
       }
     } else if (isHarryPotterWheel && badgeIndex >= 0 && badgeIndex < HOGWARTS_HOUSES.length) {
       selectedBadge = HOGWARTS_HOUSES[badgeIndex];
+    } else if (isGotWheel && badgeIndex >= 0 && badgeIndex < GOT_FACTIONS.length) {
+      selectedBadge = GOT_FACTIONS[badgeIndex];
     } else if (isGotWheel) {
       selectedBadge = securePick(GOT_FACTIONS);
     }
@@ -465,10 +469,12 @@ const WheelOfNames = () => {
                   ? FOOTBALL_TEAMS.map((team) => team.logo)
                   : isHarryPotterWheel
                     ? HOGWARTS_HOUSES.map((house) => house.logo)
-                    : null
+                    : isGotWheel
+                      ? GOT_FACTIONS.map((f) => f.logo)
+                      : null
               }
               logoRotationStep={
-                isFootballTeamsWheel || isHarryPotterWheel
+                isFootballTeamsWheel || isHarryPotterWheel || isGotWheel
                   ? harryPaletteStep
                   : 0
               }
