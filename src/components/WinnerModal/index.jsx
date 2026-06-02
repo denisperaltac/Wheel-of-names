@@ -264,8 +264,9 @@ const WinnerModal = ({
                   <span className="winner-modal__track-house">🏠</span>
                 </div>
               )}
+
               <p className="winner-modal__promoted-text">
-                Felicitaciones!!! haz sido ascendido a Cliente
+                ¡¡¡Haz sido ascendido a Cliente!!! 🍾🎉
               </p>
             </div>
           )}

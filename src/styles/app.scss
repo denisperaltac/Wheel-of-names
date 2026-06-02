@@ -782,11 +782,11 @@ $wheel-glow: rgb(74 158 255 / 15%);
     background: $bg-panel;
     border: 2px solid var(--winner-house-border, #{$border-panel});
     border-radius: 20px;
-    padding: 2rem 2rem 1.8rem;
+    padding: clamp(1rem, 2.5vh, 2.5rem) clamp(1rem, 2.5vw, 2.5rem);
     text-align: center;
     box-shadow: 0 8px 40px rgb(0 0 0 / 50%);
     animation: slide-up 0.3s ease;
-    max-width: 520px;
+    max-width: min(92vw, 900px);
     width: 92%;
     max-height: 98vh;
     overflow-y: auto;
@@ -864,17 +864,13 @@ $wheel-glow: rgb(74 158 255 / 15%);
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 1.25rem;
+    gap: clamp(0.6rem, 2vw, 2rem);
     margin-bottom: 0.85rem;
-
-    @media (width <=600px) {
-      gap: 0.75rem;
-    }
   }
 
   &__photo {
     width: auto;
-    height: 300px;
+    height: clamp(180px, 50vh, 600px);
     border-radius: 0;
     object-fit: cover;
     object-position: top;
@@ -883,24 +879,14 @@ $wheel-glow: rgb(74 158 255 / 15%);
     flex-shrink: 0;
     mask-image: linear-gradient(to bottom, black 50%, transparent 100%);
     -webkit-mask-image: linear-gradient(to bottom, black 50%, transparent 100%);
-
-    @media (width <=600px) {
-      width: 160px;
-      height: 240px;
-    }
   }
 
   &__hero &__photo {
-    height: 260px;
-
-    @media (width <=600px) {
-      width: 140px;
-      height: 220px;
-    }
+    height: clamp(160px, 45vh, 550px);
   }
 
   &__name {
-    font-size: 2rem;
+    font-size: clamp(1.3rem, 3vw, 2.8rem);
     font-weight: 700;
     color: $text-primary;
     margin-bottom: 0.5rem;
@@ -916,15 +902,10 @@ $wheel-glow: rgb(74 158 255 / 15%);
   }
 
   &__house-logo {
-    width: 128px;
-    height: 128px;
+    width: clamp(70px, 12vh, 180px);
+    height: clamp(70px, 12vh, 180px);
     object-fit: contain;
     filter: drop-shadow(0 2px 8px rgb(0 0 0 / 45%));
-
-    @media (width <=600px) {
-      width: 108px;
-      height: 108px;
-    }
   }
 
   &__boca-not-found {
@@ -1005,10 +986,10 @@ $wheel-glow: rgb(74 158 255 / 15%);
   }
 
   &__btn {
-    padding: 0.6rem 1.8rem;
+    padding: clamp(0.5rem, 1vh, 0.9rem) clamp(1.2rem, 2.5vw, 2.5rem);
     border: 1px solid $border-panel;
     border-radius: 10px;
-    font-size: 0.95rem;
+    font-size: clamp(0.85rem, 1.5vw, 1.2rem);
     font-weight: 600;
     letter-spacing: -0.01em;
     cursor: pointer;
