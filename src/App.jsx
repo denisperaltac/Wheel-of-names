@@ -7,11 +7,18 @@ import { PaletteSelector } from './components/PaletteSelector';
 import { PaletteModal } from './components/PaletteModal';
 import { NamesModal } from './components/NamesModal';
 import { DailyEndScreen } from './components/DailyEndScreen';
-import { DRIVER_NAMES, getDriverImage } from './components/drivers';
+import {
+  DRIVER_NAMES,
+  getDriverImage,
+  getGotImage,
+  formatGotDisplayName,
+  resolveDriverName,
+} from './components/drivers';
 import { PALETTES, PALETTE_IDS } from './components/palettes';
 import { securePick } from './utils/secureRandom';
 
 const STORAGE_KEY = 'wheel-names';
+const PALETTE_ROTATION_MS = 1800;
 const HOGWARTS_HOUSES = [
   {
     id: 'gryffindor',
@@ -59,6 +66,53 @@ const HOGWARTS_HOUSES = [
       text: '#c0c0c0',
       border: '#5d5d5d',
       confetti: ['#1a472a', '#25633b', '#5d5d5d', '#c0c0c0', '#f3f3f3'],
+    },
+  },
+];
+
+const GOT_FACTIONS = [
+  {
+    id: 'lannister',
+    name: 'Lannister',
+    displayLabel: 'Lannister',
+    imageFolder: 'Lannister',
+    logo: '/GOT/Logo Lannister.png',
+    nameFormat: 'suffix',
+    theme: {
+      accent: '#9b111e',
+      accentHover: '#b80c09',
+      text: '#d4af37',
+      border: '#5c0a0f',
+      confetti: ['#9b111e', '#7f0922', '#d4af37', '#1a1a1a', '#f5e6c8'],
+    },
+  },
+  {
+    id: 'stark',
+    name: 'Stark',
+    displayLabel: 'Stark',
+    imageFolder: 'Stark',
+    logo: '/GOT/Logo Stark.png',
+    nameFormat: 'suffix',
+    theme: {
+      accent: '#4a4a4a',
+      accentHover: '#6b6b6b',
+      text: '#c8c8c8',
+      border: '#2b2b2b',
+      confetti: ['#2b2b2b', '#4a4a4a', '#8b9aab', '#c8c8c8', '#e8e8e8'],
+    },
+  },
+  {
+    id: 'whitewalker',
+    name: 'Whitewalker',
+    displayLabel: 'Whitewalker',
+    imageFolder: 'Whitewalkers',
+    nameFormat: 'prefix',
+    theme: {
+      accent: '#6b8cae',
+      accentHover: '#8aa8c8',
+      text: '#e8f4fc',
+      border: '#3d5a73',
+      confetti: ['#a8c8e8', '#6b8cae', '#3d5a73', '#e8f4fc', '#c5d8eb'],
     },
   },
 ];
@@ -120,6 +174,18 @@ const FOOTBALL_TEAMS = [
   },
 ];
 
+const pickFootballTeam = (usedIds) => {
+  const available = FOOTBALL_TEAMS.filter((team) => !usedIds.includes(team.id));
+
+  if (available.length === 0) {
+    const team = securePick(FOOTBALL_TEAMS);
+    return { team, usedIds: [team.id] };
+  }
+
+  const team = securePick(available);
+  return { team, usedIds: [...usedIds, team.id] };
+};
+
 const WheelOfNames = () => {
   const [names, setNames] = useState(DRIVER_NAMES);
 
@@ -179,6 +245,7 @@ const WheelOfNames = () => {
   const [winnerBadge, setWinnerBadge] = useState(null);
   const [winnerConfettiColors, setWinnerConfettiColors] = useState(null);
   const [pastWinners, setPastWinners] = useState([]);
+  const [usedFootballTeamIds, setUsedFootballTeamIds] = useState([]);
   const [toast, setToast] = useState(null);
   const modalOpenedAt = useRef(null);
 
@@ -209,6 +276,7 @@ const WheelOfNames = () => {
   const setPalette = (id) => setPaletteId(id);
   const isHarryPotterWheel = paletteId === 'harryPotter';
   const isFootballTeamsWheel = paletteId === 'footballTeams';
+  const isGotWheel = paletteId === 'got';
   const isVegasWheel = paletteId === 'vegas';
   const currentPalette = PALETTES[paletteId] ?? PALETTES.argentina;
   const paletteColors = useMemo(() => {
@@ -229,7 +297,7 @@ const WheelOfNames = () => {
   const paletteWheelStyle = currentPalette.wheelStyle ?? null;
 
   useEffect(() => {
-    if (!isHarryPotterWheel && !isFootballTeamsWheel) {
+    if (!isHarryPotterWheel && !isFootballTeamsWheel && !isGotWheel) {
       setHarryPaletteStep(0);
       return () => {};
     }
@@ -240,10 +308,10 @@ const WheelOfNames = () => {
 
     const intervalId = setInterval(() => {
       setHarryPaletteStep((prev) => prev + 1);
-    }, 1000);
+    }, PALETTE_ROTATION_MS);
 
     return () => clearInterval(intervalId);
-  }, [isHarryPotterWheel, isFootballTeamsWheel, spinning]);
+  }, [isHarryPotterWheel, isFootballTeamsWheel, isGotWheel, spinning]);
 
   const handleRandomPalette = () => {
     const others = PALETTE_IDS.filter((id) => id !== paletteId);
@@ -278,6 +346,7 @@ const WheelOfNames = () => {
 
   const handleReset = () => {
     setPastWinners([]);
+    setUsedFootballTeamIds([]);
     saveNames(DRIVER_NAMES);
   };
 
@@ -289,12 +358,31 @@ const WheelOfNames = () => {
     setSpinning(true);
   };
 
-  const handleSpinEnd = (winnerName) => {
-    const selectedBadge = isHarryPotterWheel
-      ? securePick(HOGWARTS_HOUSES)
-      : isFootballTeamsWheel
-        ? securePick(FOOTBALL_TEAMS)
-        : null;
+  const handleSpinEnd = (winnerName, badgeIndex) => {
+    let selectedBadge = null;
+    let newUsedIds = usedFootballTeamIds;
+
+    if (isFootballTeamsWheel && badgeIndex >= 0 && badgeIndex < FOOTBALL_TEAMS.length) {
+      const segmentTeam = FOOTBALL_TEAMS[badgeIndex];
+      if (!newUsedIds.includes(segmentTeam.id)) {
+        selectedBadge = segmentTeam;
+        newUsedIds = [...newUsedIds, segmentTeam.id];
+      } else {
+        const { team, usedIds } = pickFootballTeam(newUsedIds);
+        selectedBadge = team;
+        newUsedIds = usedIds;
+      }
+    } else if (isHarryPotterWheel && badgeIndex >= 0 && badgeIndex < HOGWARTS_HOUSES.length) {
+      selectedBadge = HOGWARTS_HOUSES[badgeIndex];
+    } else if (isGotWheel && badgeIndex >= 0 && badgeIndex < GOT_FACTIONS.length) {
+      selectedBadge = GOT_FACTIONS[badgeIndex];
+    } else if (isGotWheel) {
+      selectedBadge = securePick(GOT_FACTIONS);
+    }
+
+    if (newUsedIds !== usedFootballTeamIds) {
+      setUsedFootballTeamIds(newUsedIds);
+    }
 
     setSpinning(false);
     setWinner(winnerName);
@@ -307,10 +395,12 @@ const WheelOfNames = () => {
     modalOpenedAt.current = Date.now();
   };
 
-  const handleClose = ({ telegramWalking } = {}) => {
+  const handleClose = ({ telegramWalking, promoted } = {}) => {
     const elapsed = Date.now() - (modalOpenedAt.current ?? 0);
 
-    if (telegramWalking) {
+    if (promoted) {
+      setToast({ name: winner, image: '/Afuera.png' });
+    } else if (telegramWalking) {
       setToast({ name: winner, image: '/MuchoTexto.jpg' });
     } else if (elapsed < 10000) {
       setToast({ name: winner });
@@ -328,11 +418,13 @@ const WheelOfNames = () => {
     saveNames([...names, name]);
   };
 
-  const handleRemoveAndClose = ({ telegramWalking } = {}) => {
+  const handleRemoveAndClose = ({ telegramWalking, promoted } = {}) => {
     const elapsed = Date.now() - (modalOpenedAt.current ?? 0);
     const originalName = mirrored ? winner.split("").reverse().join("") : winner;
 
-    if (telegramWalking) {
+    if (promoted) {
+      setToast({ name: winner, image: '/Afuera.png' });
+    } else if (telegramWalking) {
       setToast({ name: winner, image: '/MuchoTexto.jpg' });
     } else if (elapsed < 10000) {
       setToast({ name: winner });
@@ -372,6 +464,20 @@ const WheelOfNames = () => {
               pointerType={palettePointerType}
               center={paletteCenter}
               wheelStyle={paletteWheelStyle}
+              segmentLogos={
+                isFootballTeamsWheel
+                  ? FOOTBALL_TEAMS.map((team) => team.logo)
+                  : isHarryPotterWheel
+                    ? HOGWARTS_HOUSES.map((house) => house.logo)
+                    : isGotWheel
+                      ? GOT_FACTIONS.map((f) => f.logo)
+                      : null
+              }
+              logoRotationStep={
+                isFootballTeamsWheel || isHarryPotterWheel || isGotWheel
+                  ? harryPaletteStep
+                  : 0
+              }
             />
           ) : (
             <DailyEndScreen />
@@ -381,7 +487,18 @@ const WheelOfNames = () => {
 
       <WinnerModal
         winner={winner}
-        winnerImage={winner ? getDriverImage(winner) : null}
+        winnerDisplayName={
+          winner && isGotWheel && winnerBadge
+            ? formatGotDisplayName(resolveDriverName(winner), winnerBadge)
+            : winner
+        }
+        winnerImage={
+          winner
+            ? isGotWheel && winnerBadge
+              ? getGotImage(winner, winnerBadge.imageFolder)
+              : getDriverImage(winner)
+            : null
+        }
         winnerBadge={winnerBadge}
         isVegasTheme={isVegasWheel}
         onClose={handleClose}
@@ -392,6 +509,7 @@ const WheelOfNames = () => {
         <WinnerToast
           name={toast.name}
           image={toast.image}
+          right={toast.right}
           onDismiss={handleDismissToast}
         />
       )}

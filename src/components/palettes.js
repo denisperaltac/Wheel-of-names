@@ -143,6 +143,18 @@ export const PALETTE_FOOTBALL_TEAMS = [
   "#008d62",
 ];
 
+export const PALETTE_GOT = [
+  "#2b2b2b",
+  "#7f0922",
+  "#a8c8e8",
+  "#1a1a1a",
+  "#9b111e",
+  "#6b8cae",
+  "#3d3d3d",
+  "#b80c09",
+  "#c5d8eb",
+];
+
 export const PALETTES = {
   argentina: {
     id: "argentina",
@@ -173,6 +185,14 @@ export const PALETTES = {
     pointerClass: "harryPotter",
     center: "/centers/LogoHogwarts.png",
   },
+  got: {
+    id: "got",
+    name: "Game of Thrones",
+    colors: PALETTE_GOT,
+    pointer: "/pointers/ManoDelRey.png",
+    pointerClass: "got",
+    center: "/centers/GOT.png",
+  },
   claude: {
     id: "claude",
     name: "Claude",
@@ -193,6 +213,8 @@ export const PALETTES = {
     id: "footballTeams",
     name: "Equipos Futbol",
     colors: PALETTE_FOOTBALL_TEAMS,
+    pointer: "/pointers/Botin.png",
+    pointerClass: "botin",
     center: "/centers/Pelota.png",
   },
 };
@@ -202,6 +224,7 @@ export const PALETTE_IDS = [
   "river",
   "meli",
   "harryPotter",
+  "got",
   "claude",
   "vegas",
   "footballTeams",

@@ -65,6 +65,7 @@ const BOCA_NOT_FOUND_NAMES = new Set(["Gio", "Pelu"]);
 
 const WinnerModal = ({
   winner,
+  winnerDisplayName,
   winnerImage,
   winnerBadge,
   isVegasTheme,
@@ -105,7 +106,11 @@ const WinnerModal = ({
   useEffect(() => {
     setShowBocaNotFound(false);
 
-    if (!winner || winnerBadge?.id !== "boca" || !BOCA_NOT_FOUND_NAMES.has(winner)) {
+    if (
+      !winner ||
+      winnerBadge?.id !== "boca" ||
+      !BOCA_NOT_FOUND_NAMES.has(winner)
+    ) {
       return () => {};
     }
 
@@ -127,7 +132,7 @@ const WinnerModal = ({
 
   const displayImage =
     winner === "Jose" && remainingSeconds <= 0
-      ? "/drivers/JoseOld.jpg"
+      ? "/drivers/JoseOld.png"
       : winnerImage
         ? `/${winnerImage}`
         : null;
@@ -136,10 +141,11 @@ const WinnerModal = ({
     : 0;
   const showPromotedArrival = promoted && promotedElapsed < 0;
   const houseTheme = winnerBadge?.theme ?? null;
+  const displayName = winnerDisplayName ?? winner;
 
   const closeWithState = (callback) => {
     const isTelegramWalking = remainingSeconds < 0 && !promoted;
-    callback({ telegramWalking: isTelegramWalking });
+    callback({ telegramWalking: isTelegramWalking, promoted });
   };
 
   const handleBoxKeyDown = (e) => {
@@ -155,7 +161,9 @@ const WinnerModal = ({
       ) : (
         <Confetti active={!!winner} colors={confettiColors} />
       )}
-      {promoted && !isVegasTheme && <Confetti key="promoted" active colors={confettiColors} />}
+      {promoted && !isVegasTheme && (
+        <Confetti key="promoted" active colors={confettiColors} />
+      )}
       <div
         className={`winner-modal__box${isVegasTheme ? " winner-modal__box--vegas" : ""}`}
         style={
@@ -173,40 +181,48 @@ const WinnerModal = ({
         onClick={(e) => e.stopPropagation()}
         onKeyDown={handleBoxKeyDown}
       >
-        {isVegasTheme && <p className="winner-modal__jackpot">JACKPOT WINNER</p>}
-        {displayImage && (
-          <img
-            className="winner-modal__photo"
-            src={displayImage}
-            alt={winner}
-          />
+        {isVegasTheme && (
+          <p className="winner-modal__jackpot">JACKPOT WINNER</p>
         )}
-        <p className="winner-modal__name">{winner}</p>
-        {winnerBadge && (
-          <div className="winner-modal__house">
-            {showBocaNotFound ? (
-              <p className="winner-modal__boca-not-found">404 Not Found</p>
-            ) : (
+        {(displayImage || winnerBadge?.logo || showBocaNotFound) && (
+          <div className="winner-modal__hero">
+            {displayImage && (
               <img
-                className="winner-modal__house-logo"
-                src={winnerBadge.logo}
-                alt={`Escudo de ${winnerBadge.name}`}
+                className="winner-modal__photo"
+                src={displayImage}
+                alt={displayName}
               />
+            )}
+            {(winnerBadge?.logo || showBocaNotFound) && (
+              <div className="winner-modal__house">
+                {showBocaNotFound ? (
+                  <p className="winner-modal__boca-not-found">404 Not Found</p>
+                ) : (
+                  <img
+                    className="winner-modal__house-logo"
+                    src={winnerBadge.logo}
+                    alt={`Escudo de ${winnerBadge.name}`}
+                  />
+                )}
+              </div>
             )}
           </div>
         )}
+        <p className="winner-modal__name">{displayName}</p>
         <div className="winner-modal__content">
           {remainingSeconds > 0 && (
-            <p
-              className="winner-modal__countdown"
-              style={{ color: countdownColor }}
-              aria-live="polite"
-            >
-              <span className="winner-modal__countdown-icon">
-                {countdownIcon}
+            <div className="winner-modal__countdown" aria-live="polite">
+              <span className="winner-modal__countdown-time">
+                <span
+                  className="winner-modal__countdown-dot"
+                  style={{
+                    backgroundColor: countdownColor,
+                    animationDuration: `${Math.max(0.4, remainingSeconds / 100)}s`,
+                  }}
+                />
+                {formatTime(remainingSeconds)}
               </span>
-              {formatTime(remainingSeconds)}
-            </p>
+            </div>
           )}
 
           {showTelegram && (
@@ -216,7 +232,15 @@ const WinnerModal = ({
                 alt="Telegrama"
                 className="winner-modal__track-telegram"
                 style={{
-                  left: `calc(${telegramProgress * 100}% - ${telegramProgress * 108}px)`,
+                  left: `calc(${telegramProgress * 100}% - ${telegramProgress * 108}px + 30px)`,
+                }}
+              />
+              <img
+                src="/Cartero.png"
+                alt="Cartero"
+                className="winner-modal__track-cartero"
+                style={{
+                  left: `calc(${telegramProgress * 100}% - ${telegramProgress * 108}px + 85px)`,
                 }}
               />
               <span className="winner-modal__track-house">🏠</span>
@@ -232,11 +256,17 @@ const WinnerModal = ({
                     alt="Telegrama"
                     className="winner-modal__track-telegram winner-modal__track-telegram--arrived"
                   />
+                  <img
+                    src="/Cartero.png"
+                    alt="Cartero"
+                    className="winner-modal__track-cartero winner-modal__track-cartero--arrived"
+                  />
                   <span className="winner-modal__track-house">🏠</span>
                 </div>
               )}
+
               <p className="winner-modal__promoted-text">
-                Felicitaciones!!! haz sido ascendido a Cliente
+                ¡¡¡Haz sido ascendido a Cliente!!! 🍾🎉
               </p>
             </div>
           )}

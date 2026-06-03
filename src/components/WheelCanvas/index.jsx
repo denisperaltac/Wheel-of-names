@@ -47,6 +47,9 @@ const drawWheel = (
   colors,
   skipHub = false,
   wheelStyle = null,
+  segmentLogos = null,
+  logoImages = null,
+  logoRotationStep = 0,
 ) => {
   const palette = colors && colors.length > 0 ? colors : DEFAULT_COLORS;
   const scale = size / BASE_SIZE;
@@ -102,9 +105,12 @@ const drawWheel = (
     ctx.closePath();
     ctx.fillStyle = grad;
     ctx.fill();
-    ctx.strokeStyle = isVegas ? '#d4b15a' : 'rgba(255,255,255,0.8)';
-    ctx.lineWidth = isVegas ? 2.2 * scale : 2.5 * scale;
-    ctx.stroke();
+
+    if (isVegas) {
+      ctx.strokeStyle = '#d4b15a';
+      ctx.lineWidth = 2.2 * scale;
+      ctx.stroke();
+    }
 
     ctx.save();
     ctx.translate(cx, cy);
@@ -155,7 +161,42 @@ const drawWheel = (
       displayName = `${displayName}…`;
     }
 
-    ctx.fillText(displayName, radius - 12 * scale, fontSize * 0.38);
+    const showSegmentLogo = segmentLogos?.length && logoImages;
+    const logoSize = showSegmentLogo
+      ? Math.min(fontSize * 1.45, 42 * scale)
+      : 0;
+    const logoGap = 6 * scale;
+    const outerMargin = 6 * scale;
+    const logoX = showSegmentLogo
+      ? radius - outerMargin - logoSize
+      : 0;
+    const textX = showSegmentLogo
+      ? logoX - logoGap
+      : radius - 12 * scale;
+
+    if (showSegmentLogo) {
+      const labelY = 0;
+
+      ctx.textBaseline = 'middle';
+
+      const logoSrc =
+        segmentLogos[(i + logoRotationStep) % segmentLogos.length];
+      const logo = logoImages.get(logoSrc);
+
+      if (logo?.complete && logo.naturalWidth > 0) {
+        ctx.drawImage(
+          logo,
+          logoX,
+          labelY - logoSize / 2,
+          logoSize,
+          logoSize,
+        );
+      }
+
+      ctx.fillText(displayName, textX, labelY);
+    } else {
+      ctx.fillText(displayName, textX, fontSize * 0.38);
+    }
     ctx.restore();
   });
 
@@ -194,6 +235,8 @@ const WheelCanvas = ({
   pointerType,
   center,
   wheelStyle,
+  segmentLogos = null,
+  logoRotationStep = 0,
 }) => {
   const [claudeInput, setClaudeInput] = useState('');
   const claudeMatch = claudeInput.trim().toLowerCase() === CLAUDE_PHRASE.toLowerCase();
@@ -208,8 +251,63 @@ const WheelCanvas = ({
   const lastIdleTimeRef = useRef(null);
 
   const [size, setSize] = useState(BASE_SIZE);
+  const [logoLoadVersion, setLogoLoadVersion] = useState(0);
+  const logoImagesRef = useRef(new Map());
 
-  const draw = useCallback(() => {
+  useEffect(() => {
+    if (!segmentLogos?.length) {
+      logoImagesRef.current = new Map();
+      return () => {};
+    }
+
+    let cancelled = false;
+    const pending = new Set(segmentLogos);
+    const loaded = new Map();
+
+    const markLoaded = (src, img) => {
+      if (cancelled) return;
+
+      loaded.set(src, img);
+      pending.delete(src);
+
+      if (pending.size === 0) {
+        logoImagesRef.current = loaded;
+        setLogoLoadVersion((v) => v + 1);
+      }
+    };
+
+    segmentLogos.forEach((src) => {
+      const existing = logoImagesRef.current.get(src);
+
+      if (existing?.complete) {
+        markLoaded(src, existing);
+        return;
+      }
+
+      const img = new Image();
+
+      img.onload = () => markLoaded(src, img);
+      img.onerror = () => {
+        pending.delete(src);
+
+        if (pending.size === 0) {
+          logoImagesRef.current = loaded;
+          setLogoLoadVersion((v) => v + 1);
+        }
+      };
+      img.src = src;
+
+      if (img.complete) {
+        markLoaded(src, img);
+      }
+    });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [segmentLogos]);
+
+  const drawCb = useCallback(() => {
     const canvas = canvasRef.current;
 
     if (!canvas || !names.length) {
@@ -218,12 +316,35 @@ const WheelCanvas = ({
 
     const ctx = canvas.getContext('2d');
 
-    drawWheel(ctx, names, angleRef.current, size, colors, !!center, wheelStyle);
-  }, [names, size, colors, center, wheelStyle]);
+    drawWheel(
+      ctx,
+      names,
+      angleRef.current,
+      size,
+      colors,
+      !!center,
+      wheelStyle,
+      segmentLogos,
+      segmentLogos?.length ? logoImagesRef.current : null,
+      logoRotationStep,
+    );
+  }, [
+    names,
+    size,
+    colors,
+    center,
+    wheelStyle,
+    segmentLogos,
+    logoRotationStep,
+    logoLoadVersion,
+  ]);
+
+  const drawRef = useRef(drawCb);
+  drawRef.current = drawCb;
 
   useEffect(() => {
-    draw();
-  }, [draw]);
+    drawRef.current();
+  }, []);
 
   useEffect(() => {
     const roRef = { current: null };
@@ -320,7 +441,7 @@ const WheelCanvas = ({
       }
 
       lastIdleTimeRef.current = timestamp;
-      draw();
+      drawRef.current();
       idleAnimRef.current = requestAnimationFrame(tick);
     };
 
@@ -330,18 +451,31 @@ const WheelCanvas = ({
       if (idleAnimRef.current) {
         cancelAnimationFrame(idleAnimRef.current);
         idleAnimRef.current = null;
-        lastIdleTimeRef.current = null;
       }
     };
-  }, [spinning, draw]);
+  }, [spinning]);
+
+  const namesRef = useRef(names);
+  namesRef.current = names;
+  const segmentLogosRef = useRef(segmentLogos);
+  segmentLogosRef.current = segmentLogos;
+  const logoRotationStepRef = useRef(logoRotationStep);
+  logoRotationStepRef.current = logoRotationStep;
+  const onSpinEndRef = useRef(onSpinEnd);
+  onSpinEndRef.current = onSpinEnd;
 
   useEffect(() => {
-    if (!spinning || !names.length) {
+    if (!spinning || !namesRef.current.length) {
       return () => {};
     }
 
-    const segmentAngle = (2 * Math.PI) / names.length;
-    const winnerIndex = secureRandomInt(names.length);
+    const currentNames = namesRef.current;
+    const currentSegmentLogos = segmentLogosRef.current;
+    const currentLogoRotationStep = logoRotationStepRef.current;
+    const currentOnSpinEnd = onSpinEndRef.current;
+
+    const segmentAngle = (2 * Math.PI) / currentNames.length;
+    const winnerIndex = secureRandomInt(currentNames.length);
     const extraSpins = (5 + secureRandomInt(5)) * 2 * Math.PI;
     const targetSegmentCenter = winnerIndex * segmentAngle + segmentAngle / 2;
     const stopAngle = -targetSegmentCenter;
@@ -366,14 +500,17 @@ const WheelCanvas = ({
       angleRef.current =
         startAngleRef.current +
         (targetAngleRef.current - startAngleRef.current) * eased;
-      draw();
+      drawRef.current();
 
       if (progress < 1) {
         animRef.current = requestAnimationFrame(animate);
       } else {
         angleRef.current = targetAngleRef.current;
-        draw();
-        onSpinEnd(names[winnerIndex]);
+        drawRef.current();
+        const badgeIndex = currentSegmentLogos?.length
+          ? (winnerIndex + currentLogoRotationStep) % currentSegmentLogos.length
+          : -1;
+        currentOnSpinEnd(currentNames[winnerIndex], badgeIndex);
       }
     };
 
@@ -382,10 +519,10 @@ const WheelCanvas = ({
     return () => {
       if (animRef.current) {
         cancelAnimationFrame(animRef.current);
+        animRef.current = null;
       }
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [spinning, draw]);
+  }, [spinning]);
 
   const handleClaudeSpin = () => {
     if (claudeMatch && !spinning) {

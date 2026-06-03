@@ -12,7 +12,7 @@ const ATRAS_IMAGES = [
 
 const pickRandom = (arr) => arr[Math.floor(Math.random() * arr.length)];
 
-const WinnerToast = ({ name, image: imageProp, onDismiss }) => {
+const WinnerToast = ({ name, image: imageProp, onDismiss, right }) => {
   const [randomImage] = useState(() => pickRandom(ATRAS_IMAGES));
   const image = imageProp || randomImage;
 
@@ -25,7 +25,11 @@ const WinnerToast = ({ name, image: imageProp, onDismiss }) => {
   }, [onDismiss]);
 
   return (
-    <div className="winner-toast" role="status" aria-live="polite">
+    <div
+      className={`winner-toast${right ? ' winner-toast--right' : ''}`}
+      role="status"
+      aria-live="polite"
+    >
       <span className="winner-toast__name">{name}</span>
       <img className="winner-toast__img" src={image} alt="Atrás" />
     </div>
